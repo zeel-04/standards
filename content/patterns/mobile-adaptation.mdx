@@ -16,7 +16,7 @@ import {
 ## Rules
 
 1. **Design mobile first** (`< 768px`), then progressively enhance via `md:` / `lg:` breakpoints.
-2. **When a desktop pattern doesn't translate, swap the component — don't compress it.** Shrinking a table into a 320px viewport produces an unusable UI.
+2. **When a desktop pattern doesn't translate, swap the component — don't compress it.**
 3. **Hover-only affordances don't exist on touch.** Anything revealed on hover must be visible or reachable via tap on mobile.
 4. **Primary actions go within thumb reach** on mobile. That means bottom-sticky action bars or full-screen sheets, not header toolbars.
 5. **Touch targets ≥ 44×44 px.** Non-negotiable.
@@ -177,8 +177,6 @@ Build both desktop and mobile variants (don't compromise one for the other) when
 - The desktop pattern is essential to the task (e.g. a reconciliation table)
 - The mobile pattern is essential to the role (e.g. a field operator entering data)
 
-Use `md:` / `lg:` to switch between composed components rather than trying to shoehorn one into both sizes.
-
 ## Do / Don't
 
 **Do**
@@ -187,6 +185,6 @@ Use `md:` / `lg:` to switch between composed components rather than trying to sh
 - Verify a screen in a 360-wide viewport before considering it done.
 
 **Don't**
-- Don't rely on `overflow-x: auto` to "fit" a desktop table on mobile. Side-scrolling tables are a known failure mode.
+- Don't rely on `overflow-x: auto` to "fit" a desktop table on mobile.
 - Don't duplicate content just to satisfy both layouts. Share the inner form/card; swap the container.
-- Don't hide meaningful content at mobile sizes "to simplify". If a column matters on desktop, it matters on mobile — just in a different surface.
+- Don't hide meaningful content at mobile sizes. If a column matters on desktop, it matters on mobile — just in a different surface.

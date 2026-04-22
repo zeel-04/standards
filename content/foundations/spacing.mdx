@@ -18,8 +18,6 @@ import { Plus } from "lucide-react"
 
 # Spacing
 
-Spacing is the one foundation the preset does not encode. Everything here is a choice.
-
 ## Rules
 
 1. **Use Tailwind's 4px scale.** Stick to the common rungs (2, 4, 6, 8, 12). Half-steps need a reason.
@@ -28,9 +26,7 @@ Spacing is the one foundation the preset does not encode. Everything here is a c
 
 ## The four ranks
 
-Each rank is a scope. Step **one rung up** the ladder as you open a wider container, one rung down as you nest inward. That rule covers ~90% of decisions.
-
-The diagram below renders each scope with its actual rung as real padding — the gap you see is the spacing you'd ship.
+Each rank is a scope. Step **one rung up** the ladder as you open a wider container, one rung down as you nest inward.
 
 <figure style={{ margin: '1.5rem 0', border: '1px solid rgba(148,163,184,0.3)', borderRadius: '0.5rem', padding: '1rem', background: 'rgba(148,163,184,0.04)' }}>
   <div style={{ padding: '48px', background: 'rgba(99,102,241,0.06)', borderRadius: '0.5rem', position: 'relative' }}>
@@ -134,11 +130,3 @@ export function CreateOrgCard() {
   )
 }
 ```
-
-What each rung is doing:
-
-- **Rung 6** — untouched. `Card` provides `gap-6` between its slots; `CardHeader`/`CardContent`/`CardFooter` provide `px-6`. Don't re-apply.
-- **Rung 4** — `space-y-4` on the field stack inside `CardContent`.
-- **Rung 2** — `gap-2` on `CardFooter` for the button row, and inside the `Button` icon + label.
-
-If a card feels cramped, you almost never fix it by dropping to rung 3 — check first that you haven't skipped a rank (e.g., fields packed directly against the header without the card's own rung-6 breathing room).

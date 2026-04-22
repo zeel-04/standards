@@ -66,7 +66,7 @@ Field group spacing: `space-y-4` between fields, `space-y-8` between groups, `sp
 
 | Pattern | When | How it behaves |
 |---|---|---|
-| **Client-side, on blur** | Default for format checks (email shape, required, min length). | Validate when the field loses focus. Don't validate on every keystroke — it punishes typing. |
+| **Client-side, on blur** | Default for format checks (email shape, required, min length). | Validate when the field loses focus. Don't validate on every keystroke. |
 | **Client-side, on submit** | Cross-field rules (password matches confirmation). | Check on submit; surface each failing field inline at once. |
 | **Async on blur** | Uniqueness checks (email taken, handle in use). | Debounce 300–500ms; show a subtle inline spinner on the field; surface the result in field help text. |
 | **Server-side, on submit** | Anything the client can't know. | Return per-field errors; map them to the same inline error slot, not an alert. |
@@ -116,19 +116,19 @@ A submit button walks four states. Never hide or replace the form.
 </button>
 ```
 
-Show the spinner only if submission takes > 400ms. Snappier submissions should flip straight to the post-submit state.
+Show the spinner only if submission takes > 400ms.
 
 ## Do / Don't
 
 **Do**
 - Associate every input with its label via `htmlFor` / `id`. Wrap the input in the `<label>` *or* link them — not both.
-- Preserve every entered value on error. Re-typing after a failed submission is a bug.
+- Preserve every entered value on error.
 - Make the primary action full-width on mobile; right-align on desktop with secondary actions to its left.
 - Mark required fields with a subtle `*` or `(required)` suffix, once per label.
 
 **Don't**
-- Don't put the label *inside* the input as a placeholder. Floating labels are a variant, not a standard — they require effort to meet a11y, and rarely save space.
-- Don't validate on every keystroke. Users feel nagged before they've finished typing.
-- Don't disable the submit button based on "form validity" alone — users can't tell why it's disabled. Let them submit and surface the failing field(s).
+- Don't put the label *inside* the input as a placeholder. Floating labels are a variant, not a standard.
+- Don't validate on every keystroke.
+- Don't disable the submit button based on "form validity" alone. Let them submit and surface the failing field(s).
 - Don't put error text in a toast. Field errors go at the field.
 - Don't mix label casing — sentence case everywhere.

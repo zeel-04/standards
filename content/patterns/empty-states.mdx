@@ -24,7 +24,7 @@ import {
 
 Four stacked pieces, centred in the container. Never more than one primary action.
 
-1. **Icon** — `h-10 w-10 text-muted-foreground`, sized for presence without dominating.
+1. **Icon** — `h-10 w-10 text-muted-foreground`.
 2. **Title** — `text-base font-medium`. Names the concept ("No requests yet"), not the state ("Empty").
 3. **Description** — `text-sm text-muted-foreground`, one to two sentences. Explains why it's empty and what will fill it.
 4. **Action** (optional) — primary button if the user can fix it; omit otherwise.
@@ -85,7 +85,7 @@ Transition rules:
 
 ### Filtered results returned nothing
 
-Do **not** show a primary action that creates a new record here — the user is searching, not starting over.
+Do **not** show a primary action that creates a new record here.
 
 <Preview>
   <NoFilterMatchesDemo />
@@ -102,7 +102,7 @@ Do **not** show a primary action that creates a new record here — the user is 
 
 ### Permission-gated (user can't act)
 
-Omit the action entirely. Don't teach the user about a feature they can't use.
+Omit the action entirely.
 
 <Preview>
   <PermissionGatedEmptyDemo />
@@ -144,4 +144,4 @@ The user *could* fix it but needs another screen first. Link, don't inline-resol
 - Don't use `destructive` here — empty isn't a failure.
 - Don't use the empty state to promote a feature. "Get started with receipts!" is marketing, not UI.
 - Don't stack two primary actions. One action keeps the decision obvious.
-- Don't skip the empty state because "the list will usually have data". The first-time experience will always hit it.
+- Don't skip the empty state because "the list will usually have data".

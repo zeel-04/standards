@@ -13,7 +13,7 @@ import {
 ## Rules
 
 1. **Match error surface to error scope.** Inline (form field), section (a card failed to load), page (the route failed), global (the connection dropped).
-2. **Tell the user what happened, why, and what to do.** "Something went wrong" is a bug, not an error message.
+2. **Tell the user what happened, why, and what to do.**
 3. **Preserve user input on error.** Never make someone re-type anything because of a failed submission.
 4. **Do not use modals for errors** unless the error blocks *all* further interaction. Errors go inline or in a toast.
 5. **Toasts auto-dismiss for success (4–6s) but persist for errors until the user dismisses them.**
@@ -47,8 +47,8 @@ Voice rules for errors (see [Voice](/writing/voice)):
 
 - Say **we** or name the subject ("the upload failed"). Don't use passive ("an error has occurred").
 - Never apologise ("Sorry!") or hedge ("Oops, something's up"). Just state the problem.
-- No exclamation marks. Errors are not surprising enough to shout.
-- Preserve trust — don't blame the user ("You entered the wrong format") when the system's validation is at fault.
+- No exclamation marks.
+- Don't blame the user when the system's validation is at fault.
 
 ## Surfaces in code
 

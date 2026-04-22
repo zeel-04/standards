@@ -1,0 +1,28 @@
+# Design System
+
+> What this design system is and how to use it.
+
+## Overview
+
+- [Overview](/): What this design system is and how to use it.
+- [Principles](/principles): The five decisions that shape every other decision in this system.
+- [Components](/components): The shadcn/ui components we use. Each links to the canonical docs.
+
+## Foundations
+
+- [Preset](/foundations/preset): The shadcn preset is the source of truth for every foundation token in this system.
+- [Spacing](/foundations/spacing): Four ranks — page, card, fields, inline — cover almost every spacing decision.
+
+## Patterns
+
+- [Mobile adaptation](/patterns/mobile-adaptation): How to translate desktop patterns to mobile without just shrinking them.
+- [Forms](/patterns/forms): Layout, validation, and submission patterns for forms.
+- [Empty states](/patterns/empty-states): What a view looks like before any data exists, and what to do about it.
+- [Error handling](/patterns/error-handling): How we surface errors across inline, page-level, and global scopes.
+- [Confirmations](/patterns/confirmations): When to confirm, how to confirm, and when not to.
+
+## Writing
+
+- [Voice](/writing/voice): How we sound across the product.
+- [Writing style](/writing/writing-style): Capitalisation, punctuation, numbers, and dates.
+- [UX copy](/writing/ux-copy): Patterns for buttons, empty states, errors, and confirmations.
