@@ -1,0 +1,83 @@
+---
+title: UX copy
+description: Patterns for buttons, empty states, errors, and confirmations.
+---
+
+# UX copy
+
+## Rules
+
+1. **Button labels are verbs.** `Save`, `Submit request`, `Delete user`. Not "OK", not "Yes", not "Submit" in isolation when you can say what's being submitted.
+2. **Mirror the destructive verb in destructive confirmations.** Dialog title: "Delete request?" → button: "Delete request". Avoid "Confirm".
+3. **Empty states name the concept first**, then the reason, then the action. See [Empty states](/patterns/empty-states).
+4. **Errors name the thing, the reason, and the fix.** "Email is already in use. Try signing in instead." — not "Invalid input".
+5. **Toasts fit on one line on mobile.** If your success message needs two lines, it belongs in a dialog or a page.
+6. **Don't congratulate.** "Saved" is enough. "Nice work! Your changes are saved ✨" is not.
+
+## Copy by surface
+
+| Surface | Pattern |
+|---|---|
+| Primary button | Verb + object (`Save changes`, `Create request`) |
+| Secondary button | `Cancel` or specific verb (`Discard draft`) |
+| Confirmation dialog | Title as question; button mirrors destructive verb |
+| Empty state | Concept → reason → next action |
+| Inline error | What's wrong → how to fix |
+| Success toast | Past-tense statement of what happened |
+| Loading state | Present-tense verb (`Saving…`), only when action takes >400ms |
+
+## Examples library
+
+### Buttons
+
+| Weak | Strong |
+|---|---|
+| `OK` | `Save changes` |
+| `Submit` | `Submit request` |
+| `Yes` (on a dialog) | `Delete request` |
+| `Add` | `Add member` |
+| `Click here` | `Open report` |
+
+### Empty states
+
+| Weak | Strong |
+|---|---|
+| "No data." | "No requests yet. Submit one to get started." |
+| "Empty." | "No assigned approvals. You'll see approvals here when a request is routed to you." |
+| "Nothing here!" | "No matches for `{query}`. Try a broader search." |
+
+### Inline errors
+
+| Weak | Strong |
+|---|---|
+| "Invalid." | "Enter a valid work email." |
+| "Required." | "Choose an approver." |
+| "Field cannot be empty." | "Add a short reason — this appears on the request." |
+| "Too short." | "Password needs at least 12 characters." |
+
+### Toasts
+
+| Weak | Strong |
+|---|---|
+| "Saved!" | "Changes saved." |
+| "Done!" | "Request submitted. An approver will take a look." |
+| "Error." | "Couldn't submit. Check your connection and retry." |
+| "Copied!" | "Link copied." |
+
+### Confirmations
+
+| Weak | Strong |
+|---|---|
+| "Are you sure?" | "Delete request REQ-2039?" |
+| "This is permanent." | "This can't be undone. Any attached receipts are also removed." |
+| "OK / Cancel" | "Delete request / Cancel" |
+
+### Loading
+
+| Weak | Strong |
+|---|---|
+| "Loading…" | "Loading requests…" |
+| "Processing…" | "Submitting…" |
+| "Please wait." | (Nothing — `Saving…` on the button is enough.) |
+
+Only show a loading label if the action takes more than ~400ms. Faster actions should skip the interstitial entirely.

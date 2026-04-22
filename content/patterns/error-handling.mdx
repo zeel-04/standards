@@ -1,0 +1,105 @@
+---
+title: Error handling
+description: How we surface errors across inline, page-level, and global scopes.
+---
+
+import {
+  InlineFieldErrorDemo,
+  SectionErrorDemo,
+} from '@/components/demos/error-handling'
+
+# Error handling
+
+## Rules
+
+1. **Match error surface to error scope.** Inline (form field), section (a card failed to load), page (the route failed), global (the connection dropped).
+2. **Tell the user what happened, why, and what to do.** "Something went wrong" is a bug, not an error message.
+3. **Preserve user input on error.** Never make someone re-type anything because of a failed submission.
+4. **Do not use modals for errors** unless the error blocks *all* further interaction. Errors go inline or in a toast.
+5. **Toasts auto-dismiss for success (4–6s) but persist for errors until the user dismisses them.**
+
+## Error scopes
+
+| Scope | Surface | Example |
+|---|---|---|
+| Field | Inline below input | Invalid email format |
+| Section | Replace section content | Chart failed to load |
+| Page | Full-page error state | 404, 500, permission denied |
+| Global | Toast / banner | Network dropped, version out of date |
+
+## Copy guidelines
+
+An error message names three things in this order:
+
+1. **What happened** — the thing that didn't work, in user terms.
+2. **Why** — when it helps the user. Skip if the reason is internal.
+3. **What to do next** — a concrete next step, not "please try again later".
+
+| Weak | Strong |
+|---|---|
+| "Something went wrong." | "We couldn't load your requests. Check your connection and retry." |
+| "Invalid input." | "Enter a work email — personal domains aren't accepted." |
+| "Error 500." | "The server didn't respond. We've logged it; retry in a minute." |
+| "Permission denied." | "You don't have access to this workspace. Ask an admin to invite you." |
+| "Request failed." | "Your request couldn't be submitted. Every value is still here — retry when you're ready." |
+
+Voice rules for errors (see [Voice](/writing/voice)):
+
+- Say **we** or name the subject ("the upload failed"). Don't use passive ("an error has occurred").
+- Never apologise ("Sorry!") or hedge ("Oops, something's up"). Just state the problem.
+- No exclamation marks. Errors are not surprising enough to shout.
+- Preserve trust — don't blame the user ("You entered the wrong format") when the system's validation is at fault.
+
+## Surfaces in code
+
+### Inline field error
+
+<Preview>
+  <InlineFieldErrorDemo />
+</Preview>
+
+```tsx
+<p id="email-error" className="text-xs text-destructive">
+  Enter a valid work email.
+</p>
+```
+
+### Section error (a card failed to load)
+
+<Preview>
+  <SectionErrorDemo />
+</Preview>
+
+```tsx
+<div className="flex flex-col items-center gap-2 rounded-lg border bg-card px-6 py-8 text-center">
+  <AlertTriangle className="h-8 w-8 text-muted-foreground" aria-hidden />
+  <p className="text-sm font-medium">Couldn't load activity</p>
+  <p className="text-xs text-muted-foreground max-w-sm">
+    The feed didn't respond. This hasn't affected your other data.
+  </p>
+  <button onClick={retry} className="mt-2 h-9 rounded-md border px-4 text-sm">
+    Retry
+  </button>
+</div>
+```
+
+### Page error (full-page)
+
+Use for 404 / 403 / 500-class routes. Keep the nav chrome visible so users can recover.
+
+### Global (toast)
+
+Persistent until dismissed. Include a retry action when the cause is transient (network).
+
+## Do / Don't
+
+**Do**
+- Keep the form visible on submission failure. Preserve every entered value.
+- Provide an explicit retry affordance for any transient failure.
+- Log the underlying error to observability, but don't leak stack traces into the UI.
+
+**Don't**
+- Don't use a modal for errors unless the error blocks the entire screen's further use.
+- Don't stack multiple error surfaces for the same failure (inline + toast + banner). Pick the tightest scope.
+- Don't use `destructive` styling for informational warnings. `destructive` means a destructive action; use `bg-muted` with a warning icon for cautions.
+- Don't auto-dismiss error toasts. Users need time to read them.

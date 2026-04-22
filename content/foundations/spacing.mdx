@@ -1,0 +1,144 @@
+---
+title: Spacing
+description: Four ranks — page, card, fields, inline — cover almost every spacing decision.
+---
+
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Plus } from "lucide-react"
+
+# Spacing
+
+Spacing is the one foundation the preset does not encode. Everything here is a choice.
+
+## Rules
+
+1. **Use Tailwind's 4px scale.** Stick to the common rungs (2, 4, 6, 8, 12). Half-steps need a reason.
+2. **Gap, not margin, for flex/grid children.** Margin is for prose flow only.
+3. **Pick the rung by scope.** Wider scope → bigger rung. See the ladder below.
+
+## The four ranks
+
+Each rank is a scope. Step **one rung up** the ladder as you open a wider container, one rung down as you nest inward. That rule covers ~90% of decisions.
+
+The diagram below renders each scope with its actual rung as real padding — the gap you see is the spacing you'd ship.
+
+<figure style={{ margin: '1.5rem 0', border: '1px solid rgba(148,163,184,0.3)', borderRadius: '0.5rem', padding: '1rem', background: 'rgba(148,163,184,0.04)' }}>
+  <div style={{ padding: '48px', background: 'rgba(99,102,241,0.06)', borderRadius: '0.5rem', position: 'relative' }}>
+    <span style={{ position: 'absolute', top: '0.5rem', left: '0.75rem', fontSize: '0.7rem', opacity: 0.7, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Page · rung 12 (48px)</span>
+    <div style={{ padding: '24px', background: 'rgba(99,102,241,0.14)', borderRadius: '0.5rem', position: 'relative', marginTop: '1.25rem' }}>
+      <span style={{ position: 'absolute', top: '0.5rem', left: '0.75rem', fontSize: '0.7rem', opacity: 0.7, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Card · rung 6 (24px)</span>
+      <div style={{ padding: '16px', background: 'rgba(99,102,241,0.18)', borderRadius: '0.375rem', position: 'relative', marginTop: '1rem' }}>
+        <span style={{ position: 'absolute', top: '0.4rem', left: '0.6rem', fontSize: '0.7rem', opacity: 0.75, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Fields · rung 4 (16px)</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '1rem' }}>
+          <div style={{ width: '1rem', height: '1rem', borderRadius: '2px', background: 'rgba(99,102,241,0.6)' }} aria-hidden="true" />
+          <span style={{ fontSize: '0.8rem' }}>Inline · rung 2 (8px between icon &amp; label)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</figure>
+
+| Rank | Rung | Typical utility | Example |
+|---|---|---|---|
+| **Page** | 12 (48px) | `space-y-12`, `mt-12` | Between major page sections. |
+| **Card / panel** | 6 (24px) | `p-6`, `gap-6` | Inner padding of a card; rhythm between its header, body, footer. |
+| **Fields** | 4 (16px) | `space-y-4`, `gap-4` | Between form fields or list rows inside a card. |
+| **Inline** | 2 (8px) | `gap-2` | Icon → label inside a button, chip, menu item. |
+
+## Example: building a shadcn card
+
+The shadcn `Card` already bakes in rung 6 — `gap-6` on the card, `px-6` on header/content/footer. Your job is just to apply rung 4 between form fields and rung 2 on inline children. Do not override the card's padding.
+
+<div className="not-prose my-6 max-w-md">
+  <Card>
+    <CardHeader>
+      <CardTitle>Create organization</CardTitle>
+      <CardDescription>
+        Organizations group users, funds, and requests.
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="demo-name">Name</Label>
+          <Input id="demo-name" placeholder="Acme Ops" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="demo-code">Short code</Label>
+          <Input id="demo-code" placeholder="acme-ops" />
+        </div>
+      </div>
+    </CardContent>
+    <CardFooter className="justify-end gap-2">
+      <Button variant="outline">Cancel</Button>
+      <Button><Plus />Create</Button>
+    </CardFooter>
+  </Card>
+</div>
+
+```tsx
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Plus } from "lucide-react"
+
+export function CreateOrgCard() {
+  return (
+    <Card>
+      {/* rung 6: Card owns header/content/footer spacing via gap-6 + px-6 */}
+      <CardHeader>
+        <CardTitle>Create organization</CardTitle>
+        <CardDescription>
+          Organizations group users, funds, and requests.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        {/* rung 4: space between form fields */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" placeholder="Acme Ops" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="code">Short code</Label>
+            <Input id="code" placeholder="acme-ops" />
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter className="justify-end gap-2">
+        {/* rung 2: inline gap between button icon and label, and between buttons */}
+        <Button variant="outline">Cancel</Button>
+        <Button><Plus />Create</Button>
+      </CardFooter>
+    </Card>
+  )
+}
+```
+
+What each rung is doing:
+
+- **Rung 6** — untouched. `Card` provides `gap-6` between its slots; `CardHeader`/`CardContent`/`CardFooter` provide `px-6`. Don't re-apply.
+- **Rung 4** — `space-y-4` on the field stack inside `CardContent`.
+- **Rung 2** — `gap-2` on `CardFooter` for the button row, and inside the `Button` icon + label.
+
+If a card feels cramped, you almost never fix it by dropping to rung 3 — check first that you haven't skipped a rank (e.g., fields packed directly against the header without the card's own rung-6 breathing room).

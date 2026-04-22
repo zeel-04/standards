@@ -1,0 +1,98 @@
+---
+title: Confirmations
+description: When to confirm, how to confirm, and when not to.
+---
+
+import { DestructiveDialogDemo, UndoToastDemo } from '@/components/demos/confirmations'
+
+# Confirmations
+
+## Rules
+
+1. **Confirm only destructive and irreversible actions.** Deleting, rejecting, archiving. Don't confirm "Save" or "Submit".
+2. **Name the consequence in the confirm button**, not "Yes / OK". `Delete request` is clearer than `Confirm`.
+3. **Put the destructive button on the right**, styled `destructive`. Cancel is on the left, styled `ghost` or `outline`.
+4. **Mention what will happen, specifically.** "Delete request REQ-2039? This can't be undone" — name the entity and the consequence.
+5. **Prefer undo over confirm** when the action is reversible. Delete immediately, surface an undo toast for 8–10s.
+
+## When to use each pattern
+
+| Pattern | Use when |
+|---|---|
+| Inline confirm (expand in place) | The action is light but worth a second look |
+| Dialog confirm | The action is destructive and undo isn't feasible |
+| Undo toast | The action is reversible (most deletes with soft-delete) |
+| No confirm | The action is safe, reversible, and obvious |
+
+## Copy examples
+
+### Before / after
+
+| Weak | Strong |
+|---|---|
+| Title: "Are you sure?" / Button: "Confirm" | Title: "Delete request REQ-2039?" / Button: "Delete request" |
+| Title: "Delete?" / Body: "This action cannot be undone." | Title: "Delete user alex@acme.test?" / Body: "They'll lose access immediately. Their submitted requests stay in the system." / Button: "Delete user" |
+| Title: "Reject?" / Button: "Yes" | Title: "Reject this request?" / Body: "The requester will be notified and the request closes. You can add a note below." / Button: "Reject request" |
+| Button: "OK" / "Cancel" | Button: "Archive project" / "Keep project" |
+
+### Destructive dialog template
+
+<Preview>
+  <DestructiveDialogDemo />
+</Preview>
+
+```tsx
+<AlertDialog open={open} onOpenChange={setOpen}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Delete request REQ-2039?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This can't be undone. Any attached receipts are also removed.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+        Delete request
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+```
+
+### Undo toast template
+
+For reversible actions, skip the confirm — act, then offer undo.
+
+<Preview>
+  <UndoToastDemo />
+</Preview>
+
+```tsx
+function archiveRequest(id: string) {
+  optimisticallyArchive(id)
+  toast('Request archived', {
+    action: {
+      label: 'Undo',
+      onClick: () => restore(id),
+    },
+    duration: 8000,
+  })
+}
+```
+
+Show for 8–10s. Long enough for a user to catch a mistake, short enough not to linger.
+
+## Do / Don't
+
+**Do**
+- Mirror the destructive verb in the title and the button (`Delete` → `Delete request`).
+- Name the entity being acted on (`REQ-2039`, `alex@acme.test`) so the user confirms the right one.
+- Place the destructive button on the right; Cancel on the left.
+
+**Don't**
+- Don't confirm "Save", "Submit", or any additive action. Users understand saving.
+- Don't use `destructive` styling on non-destructive confirms. A "Publish" confirm is a primary action, not destructive.
+- Don't use "OK / Cancel" or "Yes / No". They're floor-contract choices; we can do better.
+- Don't stack confirms (confirm → another confirm). One confirm, then act.
+- Don't confirm *and* provide undo. Pick one; undo is almost always the better UX when the action is reversible.

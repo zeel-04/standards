@@ -1,0 +1,192 @@
+---
+title: Mobile adaptation
+description: How to translate desktop patterns to mobile without just shrinking them.
+---
+
+import {
+  TableToCardsDemo,
+  SidebarToSheetDemo,
+  ModalToSheetDemo,
+  HoverActionsToMenuDemo,
+  BottomBarDemo,
+} from '@/components/demos/mobile-adaptation'
+
+# Mobile adaptation
+
+## Rules
+
+1. **Design mobile first** (`< 768px`), then progressively enhance via `md:` / `lg:` breakpoints.
+2. **When a desktop pattern doesn't translate, swap the component — don't compress it.** Shrinking a table into a 320px viewport produces an unusable UI.
+3. **Hover-only affordances don't exist on touch.** Anything revealed on hover must be visible or reachable via tap on mobile.
+4. **Primary actions go within thumb reach** on mobile. That means bottom-sticky action bars or full-screen sheets, not header toolbars.
+5. **Touch targets ≥ 44×44 px.** Non-negotiable.
+
+## Common swaps
+
+| Desktop | Mobile |
+|---|---|
+| Data table | Stacked cards (surface 2–3 key fields; rest in details drawer) |
+| Multi-column form | Single column, label-above-input, full-width controls |
+| Persistent sidebar nav | Hamburger-triggered `Sheet` |
+| Hover row actions | Always-visible `...` menu or inline actions |
+| Top toolbar | Bottom sticky action bar for primary actions |
+| Centered modal | Full-screen `Sheet` |
+
+Code for each swap below.
+
+### Table → stacked cards
+
+<Preview>
+  <TableToCardsDemo />
+</Preview>
+
+```tsx
+// Desktop: hidden on mobile
+<table className="hidden md:table w-full">
+  <thead>
+    <tr className="border-b text-left text-sm text-muted-foreground">
+      <th className="px-3 py-2 font-medium">Requester</th>
+      <th className="px-3 py-2 font-medium">Amount</th>
+      <th className="px-3 py-2 font-medium">Status</th>
+    </tr>
+  </thead>
+  <tbody>{/* rows */}</tbody>
+</table>
+
+// Mobile: shown below md
+<ul className="md:hidden divide-y">
+  {items.map((item) => (
+    <li key={item.id} className="flex items-center justify-between px-4 py-3">
+      <div className="min-w-0">
+        <p className="truncate text-sm font-medium">{item.requester}</p>
+        <p className="text-xs text-muted-foreground">{item.id}</p>
+      </div>
+      <div className="text-right">
+        <p className="text-sm font-medium">{item.amount}</p>
+        <span className="text-xs text-muted-foreground">{item.status}</span>
+      </div>
+    </li>
+  ))}
+</ul>
+```
+
+### Sidebar → Sheet
+
+<Preview>
+  <SidebarToSheetDemo />
+</Preview>
+
+```tsx
+// Desktop
+<aside className="hidden md:flex md:flex-col border-r">{/* nav */}</aside>
+
+// Mobile
+<Sheet>
+  <SheetTrigger asChild className="md:hidden">
+    <button aria-label="Open menu" className="grid h-11 w-11 place-items-center">
+      <Menu className="h-6 w-6" />
+    </button>
+  </SheetTrigger>
+  <SheetContent side="left" className="w-80 p-0">
+    {/* same nav component */}
+  </SheetContent>
+</Sheet>
+```
+
+### Centered modal → full-screen sheet
+
+<Preview>
+  <ModalToSheetDemo />
+</Preview>
+
+```tsx
+// Single component driven by viewport — Dialog on desktop, Sheet on mobile.
+function CreateRequest({ open, onOpenChange }) {
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange} /* hidden on mobile */>
+        <DialogContent className="hidden md:flex md:max-w-lg">{/* form */}</DialogContent>
+      </Dialog>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="bottom" className="md:hidden h-[100dvh] w-full p-0">
+          {/* same form */}
+        </SheetContent>
+      </Sheet>
+    </>
+  )
+}
+```
+
+### Hover actions → always-visible menu
+
+<Preview>
+  <HoverActionsToMenuDemo />
+</Preview>
+
+```tsx
+// Avoid: hover-revealed actions leave the affordance hidden on touch.
+<tr className="group">
+  <td>{row.name}</td>
+  <td className="opacity-0 group-hover:opacity-100">{/* actions */}</td>
+</tr>
+
+// Prefer: explicit menu trigger, visible on every row.
+<tr>
+  <td>{row.name}</td>
+  <td>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button aria-label="Row actions" className="grid h-9 w-9 place-items-center rounded-md hover:bg-accent">
+          <MoreHorizontal className="h-5 w-5" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">{/* items */}</DropdownMenuContent>
+    </DropdownMenu>
+  </td>
+</tr>
+```
+
+### Top toolbar → bottom action bar
+
+<Preview>
+  <BottomBarDemo />
+</Preview>
+
+```tsx
+<div className="flex flex-col min-h-dvh">
+  <main className="flex-1 pb-24 md:pb-6">{/* form */}</main>
+
+  {/* Mobile: sticky bottom bar within thumb reach */}
+  <div className="md:hidden sticky bottom-0 border-t bg-background px-4 py-3">
+    <button className="h-11 w-full rounded-md bg-primary text-primary-foreground">
+      Submit request
+    </button>
+  </div>
+
+  {/* Desktop: inline footer, right-aligned */}
+  <div className="hidden md:flex justify-end gap-3 border-t px-6 py-4">
+    <button className="...">Cancel</button>
+    <button className="...">Submit request</button>
+  </div>
+</div>
+```
+
+## When to build both
+
+Build both desktop and mobile variants (don't compromise one for the other) when:
+- The desktop pattern is essential to the task (e.g. a reconciliation table)
+- The mobile pattern is essential to the role (e.g. a field operator entering data)
+
+Use `md:` / `lg:` to switch between composed components rather than trying to shoehorn one into both sizes.
+
+## Do / Don't
+
+**Do**
+- Ship one component per role — `<CreateRequestDialog>` on desktop, `<CreateRequestSheet>` on mobile — wrapping the same form body, so structure differs but content stays single-sourced.
+- Put primary actions (Submit, Approve, Reject) within reach of the thumb on mobile — sticky bottom bars or full-screen sheets.
+- Verify a screen in a 360-wide viewport before considering it done.
+
+**Don't**
+- Don't rely on `overflow-x: auto` to "fit" a desktop table on mobile. Side-scrolling tables are a known failure mode.
+- Don't duplicate content just to satisfy both layouts. Share the inner form/card; swap the container.
+- Don't hide meaningful content at mobile sizes "to simplify". If a column matters on desktop, it matters on mobile — just in a different surface.

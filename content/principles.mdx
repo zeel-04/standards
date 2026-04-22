@@ -1,0 +1,40 @@
+---
+title: Principles
+description: The five decisions that shape every other decision in this system.
+---
+
+# Principles
+
+When a rule runs out, fall back to these.
+
+## Rules
+
+1. **Mobile-first, rethink don't shrink.** Design for touch and small viewports first. When a desktop pattern doesn't translate, change the component — don't compress it.
+2. **Tokens are the contract.** Colour, radius, spacing, and typography are consumed as tokens. Never hand-author hex, px, or magic radii.
+3. **No shadows, no blur, opaque surfaces.** Establish hierarchy with borders and surface contrast. `shadow-*`, `backdrop-blur-*`, and `blur-*` utilities are banned. Sticky and overlay surfaces (headers, sidebars, sheets, popovers) use solid token-backed backgrounds — never translucent fills — so content never bleeds through on scroll.
+4. **Accessibility is non-negotiable.** Target WCAG 2.2 AA. Keyboard, focus, and contrast are not optional passes.
+5. **Copy is UI.** Microcopy is part of the component. Ship labels, empty states, and errors with the same intention as layout.
+
+---
+
+## Why these five
+
+### 1. Mobile-first, rethink don't shrink
+
+Small viewports are a filter — they surface UX decisions that stay hidden behind extra pixels. The trade-off is explicit: we build two compositions (mobile, desktop) more often than we'd like, and we accept that cost because the alternative is a cramped desktop layout pretending to be a mobile one. A concrete tell: if a data table develops a horizontal scrollbar on mobile, the desktop pattern has been shrunk instead of rethought. Swap in a stacked-card layout instead.
+
+### 2. Tokens are the contract
+
+Tokens let one preset change retheme the entire product. Raw values turn every theme change into a search-and-replace. Trade-off: a token with a name you dislike is still the right choice over a hex value you chose once. A concrete tell: a component using `bg-blue-600` continues to look "blue" after a brand refresh that shifted `primary` hues — meaning it no longer reads as the primary action.
+
+### 3. No shadows, no blur, opaque surfaces
+
+Shadows and blur are expensive (visually and to render), rarely improve clarity, and fight both contrast and dark mode. Borders and surface contrast do the same job with predictable contrast. The same reasoning extends to sticky and overlay surfaces: a translucent header may look modern against a hero image, but once it sits over a dense table the text underneath bleeds through and both layers get harder to read. Trade-off: we give up a common "elevation" metaphor and the frosted-glass aesthetic. A concrete tell: a sticky navbar with `bg-background/60 backdrop-blur` reads fine over the top of the page, then turns into visual soup the moment the user scrolls a data-heavy screen underneath it — fix is to drop the opacity and the blur, not tune them.
+
+### 4. Accessibility is non-negotiable
+
+Keyboard, focus, and contrast aren't a pass you run at the end — they're design constraints that shape the component from the start. Trade-off: a few designs get vetoed because they can't meet the contrast bar. A concrete tell: a low-contrast placeholder-as-label design that looked elegant in review is unusable for anyone with mild visual impairment.
+
+### 5. Copy is UI
+
+The label on a button changes the meaning of the action. The microcopy on an empty state is the difference between orienting a new user and confusing them. Trade-off: copy reviews slow things down; we accept that. A concrete tell: a dialog titled "Confirm?" with a "Yes" button produces more rollbacks than a dialog titled "Delete request REQ-2039?" with a "Delete request" button — even though the code is identical.

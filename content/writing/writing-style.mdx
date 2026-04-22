@@ -1,0 +1,57 @@
+---
+title: Writing style
+description: Capitalisation, punctuation, numbers, and dates.
+---
+
+# Writing style
+
+## Rules
+
+1. **Sentence case** for all UI — page titles, buttons, menu items, table headers. Never title case.
+2. **Serial comma.** "Requests, approvals, and refunds."
+3. **No trailing punctuation in labels, buttons, or single-line helper text.** Full sentences elsewhere get periods.
+4. **Numerals for all numbers in UI** (`3 pending`, not "three pending"). Spell out in long-form prose for one through nine.
+5. **Dates use `MMM D, YYYY` by default** (`Apr 16, 2026`). Use relative (`2 days ago`) for recency, never mixed in the same list.
+6. **Currency always shows the symbol + amount** (`$2,500.00`). Use `en-US` locale formatting unless a project overrides it.
+7. **Never truncate without a tooltip or expandable.** If text fits, let it fit; if not, give the user a way to see it.
+
+## Abbreviations and acronyms
+
+Rules of thumb:
+
+- **Spell out** on the first occurrence per surface (a page, a dialog, a toast). Follow with the short form in parentheses. After that, the short form is fine.
+  - "Single sign-on (SSO) lets your team reuse their work login. Configure SSO below."
+- **Don't expand universal ones.** "URL", "API", "PDF", "CSV", "ID", "OK" (the word, not the button label) never need spelling out.
+- **Acronyms stay uppercase.** `API`, `URL`, `PDF`. Don't title-case them in sentence-case labels ("Api" is wrong).
+- **Plurals:** no apostrophe. `APIs`, `PDFs`, `IDs` — not `API's`.
+- **Articles:** follow how it's pronounced — "an API", "a URL", "an SSO login".
+- **Avoid internal abbreviations in UI copy.** "Req" for "Request", "Org" for "Organization" — spell them out. Internal shorthand leaks product jargon.
+
+## Numbers, dates, currency — worked examples
+
+| Context | Correct | Wrong |
+|---|---|---|
+| Badge | `3 pending` | `Three pending` |
+| List header | `12 requests` | `12 Requests` (title-cased) / `12 request's` |
+| Date default | `Apr 16, 2026` | `16/04/2026` / `April 16, 2026` |
+| Recent date | `2 days ago` | `Last Tuesday` (ambiguous) |
+| Currency | `$2,500.00` | `2500 USD` / `$2500` |
+| Range | `Apr 10 – Apr 16, 2026` | `04/10 - 04/16` |
+| Percentage | `12%` | `12 %` (space before) |
+| Empty count | `0 results` | `No results` on a count; use "No results" only for empty-state titles. |
+
+Never mix relative and absolute dates in the same list — pick one format per column.
+
+## Do / Don't
+
+**Do**
+- Keep button labels short and verby: `Save`, `Submit request`, `Invite member`.
+- Use en dash (`–`) for ranges (`Apr 10 – Apr 16`). Use em dash (`—`) for sentence breaks (like this).
+- Write "sign in" / "sign up" as two words for verbs; "sign-in" / "sign-up" with a hyphen for the noun ("the sign-in screen").
+
+**Don't**
+- Don't title-case headings, menu items, or buttons. "Create Request" → "Create request".
+- Don't end button labels with periods. "Save." is a sentence; buttons aren't sentences.
+- Don't use "&" in place of "and" in body copy. Keep it in compact surfaces only (labels, badges).
+- Don't wrap file sizes or byte counts without units (`1.2 MB`, not `1200000`).
+- Don't truncate without giving the user a way to see the full value (tooltip, expand, or link to a detail view).

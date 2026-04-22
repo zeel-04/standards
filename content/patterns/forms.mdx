@@ -1,0 +1,134 @@
+---
+title: Forms
+description: Layout, validation, and submission patterns for forms.
+---
+
+import {
+  EmailFieldDemo,
+  FormLevelErrorDemo,
+  SubmitStateDemo,
+} from '@/components/demos/forms'
+
+# Forms
+
+## Rules
+
+1. **Label above input**, never floating or placeholder-as-label. Placeholders are for examples, not labels.
+2. **Single column on mobile.** Desktop may use two columns only when fields are clearly paired (first/last name, city/postal).
+3. **Validation on blur, not on every keystroke.** Show errors only after the user has attempted a value.
+4. **Error text sits immediately below the input** in `text-destructive`, with an icon if the error is critical.
+5. **Primary action is full-width on mobile**, right-aligned on desktop. Secondary actions are ghost or outline variants to its left.
+6. **Required fields are marked; optional ones aren't** (don't mark everything "(optional)").
+
+## Anatomy
+
+A field is four stacked pieces. Render them in this order, always:
+
+1. **Label** — `text-sm font-medium`, sits above the input. `htmlFor` ties it to the input.
+2. **Input** — the control. `border-input`, `rounded-md`, `h-9` for a standard input on desktop; `h-11` on mobile for touch.
+3. **Help text** (optional) — `text-xs text-muted-foreground`, sits below the input.
+4. **Error text** (conditional) — `text-xs text-destructive`, replaces help text when validation fails. Tied to the input with `aria-describedby`.
+
+<Preview>
+  <EmailFieldDemo />
+</Preview>
+
+```tsx
+<div className="space-y-1.5">
+  <label htmlFor="email" className="text-sm font-medium">
+    Work email
+  </label>
+  <input
+    id="email"
+    type="email"
+    aria-invalid={hasError}
+    aria-describedby="email-hint email-error"
+    className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+               aria-invalid:border-destructive"
+  />
+  {!hasError && (
+    <p id="email-hint" className="text-xs text-muted-foreground">
+      We'll send a verification link.
+    </p>
+  )}
+  {hasError && (
+    <p id="email-error" className="text-xs text-destructive">
+      Enter a valid work email.
+    </p>
+  )}
+</div>
+```
+
+Field group spacing: `space-y-4` between fields, `space-y-8` between groups, `space-y-1.5` inside a field.
+
+## Validation patterns
+
+| Pattern | When | How it behaves |
+|---|---|---|
+| **Client-side, on blur** | Default for format checks (email shape, required, min length). | Validate when the field loses focus. Don't validate on every keystroke — it punishes typing. |
+| **Client-side, on submit** | Cross-field rules (password matches confirmation). | Check on submit; surface each failing field inline at once. |
+| **Async on blur** | Uniqueness checks (email taken, handle in use). | Debounce 300–500ms; show a subtle inline spinner on the field; surface the result in field help text. |
+| **Server-side, on submit** | Anything the client can't know. | Return per-field errors; map them to the same inline error slot, not an alert. |
+
+### Inline vs summary
+
+- **Inline errors** — default for any error the user can fix by editing a field. Always surface at the field.
+- **Summary** — only for form-level errors that don't map to a single field (e.g. "This request conflicts with request #422"). Place above the submit row, styled like an inline alert.
+
+<Preview>
+  <FormLevelErrorDemo />
+</Preview>
+
+```tsx
+{formError && (
+  <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+    {formError}
+  </div>
+)}
+```
+
+## Submission states
+
+A submit button walks four states. Never hide or replace the form.
+
+| State | Button | Form body |
+|---|---|---|
+| Idle | `Submit request` (primary) | Interactive. |
+| Submitting | `Submit request` + leading spinner; button `disabled` | Fields remain visible and readable; optionally set `aria-busy` on the form. |
+| Success | Button returns to idle, flash a success toast, navigate or reset. | Reset or keep, depending on flow. |
+| Error | Button returns to idle. Inline errors at each failing field; optional form-level alert for non-field errors. | **Preserve every value the user entered.** |
+
+<Preview>
+  <SubmitStateDemo />
+</Preview>
+
+```tsx
+<button
+  type="submit"
+  disabled={isSubmitting}
+  className="inline-flex items-center justify-center gap-2 h-11 w-full md:w-auto md:h-9 rounded-md
+             bg-primary px-4 text-sm font-medium text-primary-foreground
+             disabled:opacity-60 disabled:pointer-events-none"
+>
+  {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+  {isSubmitting ? 'Submitting…' : 'Submit request'}
+</button>
+```
+
+Show the spinner only if submission takes > 400ms. Snappier submissions should flip straight to the post-submit state.
+
+## Do / Don't
+
+**Do**
+- Associate every input with its label via `htmlFor` / `id`. Wrap the input in the `<label>` *or* link them — not both.
+- Preserve every entered value on error. Re-typing after a failed submission is a bug.
+- Make the primary action full-width on mobile; right-align on desktop with secondary actions to its left.
+- Mark required fields with a subtle `*` or `(required)` suffix, once per label.
+
+**Don't**
+- Don't put the label *inside* the input as a placeholder. Floating labels are a variant, not a standard — they require effort to meet a11y, and rarely save space.
+- Don't validate on every keystroke. Users feel nagged before they've finished typing.
+- Don't disable the submit button based on "form validity" alone — users can't tell why it's disabled. Let them submit and surface the failing field(s).
+- Don't put error text in a toast. Field errors go at the field.
+- Don't mix label casing — sentence case everywhere.

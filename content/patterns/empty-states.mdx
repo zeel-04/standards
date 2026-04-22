@@ -1,0 +1,147 @@
+---
+title: Empty states
+description: What a view looks like before any data exists, and what to do about it.
+---
+
+import {
+  NoRecordsEmptyDemo,
+  NoFilterMatchesDemo,
+  PermissionGatedEmptyDemo,
+  BlockedSetupEmptyDemo,
+} from '@/components/demos/empty-states'
+
+# Empty states
+
+## Rules
+
+1. **Every list, table, and data surface has a designed empty state.** "Nothing here" is a UI decision, not a missing screen.
+2. **Empty states answer three questions:** what is this screen, why is it empty, what should I do next. In that order.
+3. **Include a primary action when the user can fix it** (e.g. "Create request"). Omit it when they can't (e.g. "No assigned approvals" for an approver).
+4. **Use an illustration or icon, not a shadow'd card.** A single icon at `h-10 w-10` in `text-muted-foreground` is usually enough. (Source the icon from the preset's icon library — see [Iconography](/foundations/iconography).)
+5. **Never use the empty state to sell a feature.** It's a functional screen, not a marketing moment.
+
+## Anatomy
+
+Four stacked pieces, centred in the container. Never more than one primary action.
+
+1. **Icon** — `h-10 w-10 text-muted-foreground`, sized for presence without dominating.
+2. **Title** — `text-base font-medium`. Names the concept ("No requests yet"), not the state ("Empty").
+3. **Description** — `text-sm text-muted-foreground`, one to two sentences. Explains why it's empty and what will fill it.
+4. **Action** (optional) — primary button if the user can fix it; omit otherwise.
+
+<Preview>
+  <NoRecordsEmptyDemo />
+</Preview>
+
+```tsx
+<div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-card px-6 py-12 text-center">
+  <FileText className="h-10 w-10 text-muted-foreground" aria-hidden />
+  <div className="space-y-1">
+    <h3 className="text-base font-medium">No requests yet</h3>
+    <p className="text-sm text-muted-foreground max-w-sm">
+      When someone on your team submits a reimbursement request, it'll show up here.
+    </p>
+  </div>
+  <button className="mt-2 h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+    Create request
+  </button>
+</div>
+```
+
+Spacing: `gap-3` between icon, text group, action; `py-12` inside the container; inner text group uses `space-y-1`.
+
+## Empty vs loading vs error
+
+Same surface, three different states. Pick by asking: *does the data exist?*
+
+| State | Data exists? | Show |
+|---|---|---|
+| **Loading** | Unknown (request in flight) | Skeleton that mirrors the populated layout. Not a spinner in the middle. |
+| **Empty** | Yes — request succeeded, zero results | Empty state (this page). |
+| **Error** | Unknown — request failed | Error state with a retry action. See [Error handling](/patterns/error-handling). |
+
+Transition rules:
+
+- Loading → Empty: fade in, don't slide. Users don't need to be told "it's done".
+- Error → Loading: allow retry; re-enter the loading state while the request is in flight.
+- Don't show a loading skeleton on top of an empty state while refreshing. Keep the empty state and put a subtle inline indicator instead.
+
+## Examples
+
+### No records yet (first-time empty)
+
+<Preview>
+  <NoRecordsEmptyDemo />
+</Preview>
+
+```tsx
+<EmptyState
+  icon={<FileText className="h-10 w-10 text-muted-foreground" />}
+  title="No requests yet"
+  description="When someone on your team submits a reimbursement request, it'll show up here."
+  action={<Button>Create request</Button>}
+/>
+```
+
+### Filtered results returned nothing
+
+Do **not** show a primary action that creates a new record here — the user is searching, not starting over.
+
+<Preview>
+  <NoFilterMatchesDemo />
+</Preview>
+
+```tsx
+<EmptyState
+  icon={<SearchX className="h-10 w-10 text-muted-foreground" />}
+  title="No matches"
+  description={`No requests match "${query}". Try a broader search or clear your filters.`}
+  action={<Button variant="ghost" onClick={clearFilters}>Clear filters</Button>}
+/>
+```
+
+### Permission-gated (user can't act)
+
+Omit the action entirely. Don't teach the user about a feature they can't use.
+
+<Preview>
+  <PermissionGatedEmptyDemo />
+</Preview>
+
+```tsx
+<EmptyState
+  icon={<Lock className="h-10 w-10 text-muted-foreground" />}
+  title="No assigned approvals"
+  description="You'll see approvals here when a request is routed to you."
+/>
+```
+
+### Blocked / not-set-up
+
+The user *could* fix it but needs another screen first. Link, don't inline-resolve.
+
+<Preview>
+  <BlockedSetupEmptyDemo />
+</Preview>
+
+```tsx
+<EmptyState
+  icon={<Settings className="h-10 w-10 text-muted-foreground" />}
+  title="Add a payment method to continue"
+  description="Reimbursements need a verified payment method before they can be issued."
+  action={<Button asChild><a href="/settings/payments">Go to settings</a></Button>}
+/>
+```
+
+## Do / Don't
+
+**Do**
+- Write the title as a concept ("No requests yet") so the user can tell the screen apart from an error.
+- Scope the description to this screen's purpose — don't re-explain the product.
+- Use the preset's icon library. See [Iconography](/foundations/iconography).
+
+**Don't**
+- Don't use `destructive` here — empty isn't a failure.
+- Don't use the empty state to promote a feature. "Get started with receipts!" is marketing, not UI.
+- Don't stack two primary actions. One action keeps the decision obvious.
+- Don't skip the empty state because "the list will usually have data". The first-time experience will always hit it.
