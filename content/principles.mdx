@@ -14,3 +14,4 @@ When a rule runs out, fall back to these.
 3. **No shadows, no blur, opaque surfaces.** Establish hierarchy with borders and surface contrast. `shadow-*`, `backdrop-blur-*`, and `blur-*` utilities are banned. Sticky and overlay surfaces (headers, sidebars, sheets, popovers) use solid token-backed backgrounds — never translucent fills — so content never bleeds through on scroll.
 4. **Accessibility is non-negotiable.** Target WCAG 2.2 AA. Keyboard, focus, and contrast are not optional passes.
 5. **Copy is UI.** Microcopy is part of the component. Ship labels, empty states, and errors with the same intention as layout.
+6. **Trust the defaults.** shadcn primitives bake in our spacing, padding, and rhythm. Override only when the design genuinely needs it — and say why in the diff.

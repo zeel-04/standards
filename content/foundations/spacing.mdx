@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
+import { DropdownSpacingDemo } from "@/components/demos/spacing"
 
 # Spacing
 
@@ -50,6 +51,25 @@ Each rank is a scope. Step **one rung up** the ladder as you open a wider contai
 | **Card / panel** | 6 (24px) | `p-6`, `gap-6` | Inner padding of a card; rhythm between its header, body, footer. |
 | **Fields** | 4 (16px) | `space-y-4`, `gap-4` | Between form fields or list rows inside a card. |
 | **Inline** | 2 (8px) | `gap-2` | Icon → label inside a button, chip, menu item. |
+
+## Inline rung in a dropdown
+
+Inside menus, items don't get rung-4 gaps between them — that's too loose. Stay at rung 2: tight item padding (`px-2 py-1.5`), `gap-2` between icon and label, and let the hover/selected background — not whitespace — separate items.
+
+<Preview>
+  <DropdownSpacingDemo />
+</Preview>
+
+```tsx
+<DropdownMenuContent>
+  {/* rung 2: gap-2 between icon and label, px-2 py-1.5 item padding */}
+  <DropdownMenuItem><Pencil />Rename</DropdownMenuItem>
+  <DropdownMenuItem><Copy />Duplicate</DropdownMenuItem>
+  <DropdownMenuItem><Share2 />Share</DropdownMenuItem>
+  <DropdownMenuSeparator />
+  <DropdownMenuItem variant="destructive"><Trash2 />Delete</DropdownMenuItem>
+</DropdownMenuContent>
+```
 
 ## Example: building a shadcn card
 

@@ -1,0 +1,78 @@
+---
+title: Iconography
+description: Reuse before you reach for new, and keep shapes simple enough to read at 16px.
+---
+
+import { Trash, Trash2, XCircle, Pencil, Copy, Share2, Plus, Search, Filter, Table2, TableProperties } from "lucide-react"
+
+# Iconography
+
+## Rules
+
+1. **Reuse before reaching for new.** Check the existing icon set first. Only introduce a new icon when no existing one carries the meaning — one concept, one glyph, everywhere.
+2. **Simplified shapes, minimal detail.** Use the fewest strokes and shapes needed to read the metaphor. Detail that disappears at 16px is noise; strip it out.
+
+## Reuse existing icons
+
+One concept should map to one icon across the product. If "delete" is `Trash` in a table row, it stays `Trash` in the dropdown and the confirmation dialog — never swapped for `XCircle` or a bespoke bin.
+
+<div className="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure style={{ margin: 0, border: '1px solid rgba(34,197,94,0.35)', borderRadius: '0.5rem', padding: '1rem', background: 'rgba(34,197,94,0.06)' }}>
+    <figcaption style={{ fontSize: '0.7rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgb(22,163,74)', marginBottom: '0.75rem' }}>Do · one icon per concept</figcaption>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Trash size={16} /> Delete row</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Trash size={16} /> Delete from menu</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Trash size={16} /> Delete in dialog</div>
+    </div>
+  </figure>
+  <figure style={{ margin: 0, border: '1px solid rgba(239,68,68,0.35)', borderRadius: '0.5rem', padding: '1rem', background: 'rgba(239,68,68,0.06)' }}>
+    <figcaption style={{ fontSize: '0.7rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgb(220,38,38)', marginBottom: '0.75rem' }}>Don't · three glyphs, same action</figcaption>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Trash size={16} /> Delete row</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><XCircle size={16} /> Delete from menu</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Trash2 size={16} /> Delete in dialog</div>
+    </div>
+  </figure>
+</div>
+
+## Simplified shapes
+
+Icons are read at a glance — and that read fails when a glyph piles on extra shapes that don't help carry the metaphor. Both icons below mean "table", but `Table2` keeps the metaphor in a single clean outline, while `TableProperties` splits the frame into a denser grid of lines that turns muddy at 16px.
+
+<div className="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure style={{ margin: 0, border: '1px solid rgba(34,197,94,0.35)', borderRadius: '0.5rem', padding: '1rem', background: 'rgba(34,197,94,0.06)' }}>
+    <figcaption style={{ fontSize: '0.7rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgb(22,163,74)', marginBottom: '0.75rem' }}>Do · <code>Table2</code> reads at every size</figcaption>
+    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '1.25rem' }}>
+      {[48, 24, 16].map((size) => (
+        <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+          <Table2 size={size} strokeWidth={1.75} />
+          <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>{size}px</span>
+        </div>
+      ))}
+    </div>
+  </figure>
+  <figure style={{ margin: 0, border: '1px solid rgba(239,68,68,0.35)', borderRadius: '0.5rem', padding: '1rem', background: 'rgba(239,68,68,0.06)' }}>
+    <figcaption style={{ fontSize: '0.7rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgb(220,38,38)', marginBottom: '0.75rem' }}>Don't · <code>TableProperties</code> blurs at 16px</figcaption>
+    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '1.25rem' }}>
+      {[48, 24, 16].map((size) => (
+        <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+          <TableProperties size={size} strokeWidth={1.75} />
+          <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>{size}px</span>
+        </div>
+      ))}
+    </div>
+  </figure>
+</div>
+
+## In context
+
+These rules are why a button toolbar reads cleanly even at a glance — every glyph is one of the household set, and each one survives the small size the button forces it into.
+
+<div className="not-prose my-6 flex flex-wrap items-center gap-2 rounded-md border p-3" style={{ borderColor: 'rgba(148,163,184,0.3)' }}>
+  <button className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm" style={{ borderColor: 'rgba(148,163,184,0.4)' }}><Search size={16} /> Search</button>
+  <button className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm" style={{ borderColor: 'rgba(148,163,184,0.4)' }}><Filter size={16} /> Filter</button>
+  <button className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm" style={{ borderColor: 'rgba(148,163,184,0.4)' }}><Pencil size={16} /> Edit</button>
+  <button className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm" style={{ borderColor: 'rgba(148,163,184,0.4)' }}><Copy size={16} /> Duplicate</button>
+  <button className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm" style={{ borderColor: 'rgba(148,163,184,0.4)' }}><Share2 size={16} /> Share</button>
+  <button className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm" style={{ borderColor: 'rgba(148,163,184,0.4)' }}><Plus size={16} /> New</button>
+</div>
