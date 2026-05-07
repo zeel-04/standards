@@ -12,6 +12,7 @@
 
 - [Preset](/foundations/preset): The shadcn preset is the source of truth for every foundation token in this system.
 - [Spacing](/foundations/spacing): Four ranks — page, card, fields, inline — cover almost every spacing decision.
+- [Iconography](/foundations/iconography): Reuse before you reach for new, and keep shapes simple enough to read at 16px.
 
 ## Patterns
 

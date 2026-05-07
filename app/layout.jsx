@@ -19,7 +19,12 @@ export const viewport = {
   initialScale: 1,
 }
 
-const navbar = <Navbar logo={<b>Design System</b>} />
+const navbar = (
+  <Navbar
+    logo={<b>Design System</b>}
+    projectLink="https://github.com/zeel-04/design-system"
+  />
+)
 const footer = <Footer>{new Date().getFullYear()} © Design System.</Footer>
 
 export default async function RootLayout({ children }) {
