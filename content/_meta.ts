@@ -1,12 +1,9 @@
 import type { MetaRecord } from 'nextra'
 
 const meta: MetaRecord = {
-  index: 'Overview',
-  principles: 'Principles',
-  foundations: 'Foundations',
-  components: 'Components',
-  patterns: 'Patterns',
-  writing: 'Writing',
+  index: { type: 'page', title: 'Home', display: 'hidden' },
+  design: { type: 'page', title: 'Design' },
+  requirements: { type: 'page', title: 'Requirements' },
 }
 
 export default meta

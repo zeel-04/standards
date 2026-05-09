@@ -87,7 +87,7 @@ const main = async () => {
     }
   }
 
-  const out = [`# ${rootFm.title === 'Overview' ? 'Design System' : rootFm.title || 'Design System'}`, '']
+  const out = [`# ${rootFm.title === 'Overview' ? 'Standards' : rootFm.title || 'Standards'}`, '']
   if (rootFm.description) out.push(`> ${rootFm.description}`, '')
   if (topPages.length) out.push('## Overview', '', ...topPages, '')
   for (const { label, items } of sections) out.push(`## ${label}`, '', ...items, '')

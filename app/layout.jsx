@@ -7,11 +7,11 @@ import './globals.css'
 
 export const metadata = {
   title: {
-    default: 'Design System',
-    template: '%s · Design System',
+    default: 'Standards',
+    template: '%s · Standards',
   },
   description:
-    'House design system built on shadcn/ui and Tailwind v4 — opinionated defaults for colour, radius, typography, and patterns.',
+    'Internal standards across design, requirements, and more.',
 }
 
 export const viewport = {
@@ -21,11 +21,11 @@ export const viewport = {
 
 const navbar = (
   <Navbar
-    logo={<b>Design System</b>}
-    projectLink="https://github.com/zeel-04/design-system"
+    logo={<b>Standards</b>}
+    projectLink="https://github.com/zeel-04/standards"
   />
 )
-const footer = <Footer>{new Date().getFullYear()} © Design System.</Footer>
+const footer = <Footer>{new Date().getFullYear()} © Standards.</Footer>
 
 export default async function RootLayout({ children }) {
   return (

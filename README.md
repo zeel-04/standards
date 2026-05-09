@@ -1,6 +1,6 @@
-# Design System
+# Standards
 
-Documentation site for a house design system built on **shadcn/ui** + **Tailwind v4**, powered by [Nextra](https://nextra.site/) on Next.js.
+Documentation site for internal standards across design, requirements, and more — powered by [Nextra](https://nextra.site/) on Next.js. The Design domain is built on **shadcn/ui** + **Tailwind v4**.
 
 ## Getting started
 
@@ -19,6 +19,6 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Structure
 
-- `content/` — MDX docs (foundations, components, patterns, writing)
+- `content/` — MDX docs, organised by domain (`design/`, `requirements/`, …)
 - `components/` — shared UI and MDX components
 - `app/` — Next.js App Router entry

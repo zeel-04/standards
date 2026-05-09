@@ -17,7 +17,7 @@ import {
 1. **Every list, table, and data surface has a designed empty state.** "Nothing here" is a UI decision, not a missing screen.
 2. **Empty states answer three questions:** what is this screen, why is it empty, what should I do next. In that order.
 3. **Include a primary action when the user can fix it** (e.g. "Create request"). Omit it when they can't (e.g. "No assigned approvals" for an approver).
-4. **Use an illustration or icon, not a shadow'd card.** A single icon at `h-10 w-10` in `text-muted-foreground` is usually enough. (Source the icon from the preset's icon library — see [Iconography](/foundations/iconography).)
+4. **Use an illustration or icon, not a shadow'd card.** A single icon at `h-10 w-10` in `text-muted-foreground` is usually enough. (Source the icon from the preset's icon library — see [Iconography](/design/foundations/iconography).)
 5. **Never use the empty state to sell a feature.** It's a functional screen, not a marketing moment.
 
 ## Anatomy
@@ -58,7 +58,7 @@ Same surface, three different states. Pick by asking: *does the data exist?*
 |---|---|---|
 | **Loading** | Unknown (request in flight) | Skeleton that mirrors the populated layout. Not a spinner in the middle. |
 | **Empty** | Yes — request succeeded, zero results | Empty state (this page). |
-| **Error** | Unknown — request failed | Error state with a retry action. See [Error handling](/patterns/error-handling). |
+| **Error** | Unknown — request failed | Error state with a retry action. See [Error handling](/design/patterns/error-handling). |
 
 Transition rules:
 
@@ -138,7 +138,7 @@ The user *could* fix it but needs another screen first. Link, don't inline-resol
 **Do**
 - Write the title as a concept ("No requests yet") so the user can tell the screen apart from an error.
 - Scope the description to this screen's purpose — don't re-explain the product.
-- Use the preset's icon library. See [Iconography](/foundations/iconography).
+- Use the preset's icon library. See [Iconography](/design/foundations/iconography).
 
 **Don't**
 - Don't use `destructive` here — empty isn't a failure.
