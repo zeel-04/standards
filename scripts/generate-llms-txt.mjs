@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const CONTENT_DIR = join(ROOT, 'content')
-const OUTPUT = join(ROOT, 'llms.txt')
+const OUTPUT = join(ROOT, 'public', 'llms.txt')
 const SITE_URL = process.env.SITE_URL?.replace(/\/$/, '') ?? ''
 
 const parseFrontmatter = (source) => {
@@ -19,12 +19,75 @@ const parseFrontmatter = (source) => {
   return data
 }
 
+const readString = (src, i) => {
+  const quote = src[i++]
+  const start = i
+  while (i < src.length && src[i] !== quote) {
+    if (src[i] === '\\') i++
+    i++
+  }
+  return [src.slice(start, i), i + 1]
+}
+
+const readBalanced = (src, i) => {
+  const start = i
+  let depth = 0
+  for (; i < src.length; i++) {
+    const c = src[i]
+    if (c === "'" || c === '"') {
+      [, i] = readString(src, i)
+      i--
+    } else if (c === '{') depth++
+    else if (c === '}') {
+      depth--
+      if (depth === 0) return [src.slice(start + 1, i), i + 1]
+    }
+  }
+  return ['', i]
+}
+
 const parseMeta = (source) => {
-  const body = source.match(/\{([\s\S]*)\}/)?.[1] ?? ''
+  const open = source.indexOf('{', source.indexOf('='))
+  if (open === -1) return []
+  const [body] = readBalanced(source, open)
   const entries = []
-  const re = /['"]?([\w-]+)['"]?\s*:\s*(['"])((?:\\.|(?!\2).)*)\2/g
-  let m
-  while ((m = re.exec(body)) !== null) entries.push([m[1], m[3]])
+  let i = 0
+  while (i < body.length) {
+    while (i < body.length && /[\s,]/.test(body[i])) i++
+    if (i >= body.length) break
+
+    let key
+    if (body[i] === "'" || body[i] === '"') [key, i] = readString(body, i)
+    else {
+      const s = i
+      while (i < body.length && /[\w-]/.test(body[i])) i++
+      key = body.slice(s, i)
+    }
+    if (!key) { i++; continue }
+
+    while (i < body.length && /\s/.test(body[i])) i++
+    if (body[i] !== ':') continue
+    i++
+    while (i < body.length && /\s/.test(body[i])) i++
+
+    let label = key
+    let hidden = false
+    if (body[i] === "'" || body[i] === '"') {
+      [label, i] = readString(body, i)
+    } else if (body[i] === '{') {
+      let obj
+      [obj, i] = readBalanced(body, i)
+      const t = obj.match(/\btitle\s*:\s*(['"])((?:\\.|(?!\1).)*)\1/)
+      if (t) label = t[2]
+      const d = obj.match(/\bdisplay\s*:\s*(['"])((?:\\.|(?!\1).)*)\1/)
+      if (d && d[2] === 'hidden') hidden = true
+    } else {
+      while (i < body.length && body[i] !== ',') i++
+      continue
+    }
+
+    if (!hidden) entries.push([key, label])
+  }
   return entries
 }
 
@@ -60,13 +123,23 @@ const pageLine = async (dir, key, label, prefix) => {
   return `- [${title}](${urlFor(slug)})${desc}`
 }
 
-const collectSection = async (dir, prefix) => {
+const collectSection = async (dir, prefix, headingLevel = 3) => {
   const meta = await readMeta(dir)
-  const lines = []
+  const pageLines = []
+  const subSections = []
   for (const [key, label] of meta) {
-    if (await isFile(join(dir, `${key}.mdx`))) {
-      lines.push(await pageLine(dir, key, label, prefix))
+    const mdxPath = join(dir, `${key}.mdx`)
+    const subDir = join(dir, key)
+    if (await isFile(mdxPath)) {
+      pageLines.push(await pageLine(dir, key, label, prefix))
+    } else if (await isDir(subDir)) {
+      const subLines = await collectSection(subDir, `${prefix}${key}/`, headingLevel + 1)
+      if (subLines.length) subSections.push({ label, subLines })
     }
+  }
+  const lines = [...pageLines]
+  for (const { label, subLines } of subSections) {
+    lines.push('', `${'#'.repeat(headingLevel)} ${label}`, '', ...subLines)
   }
   return lines
 }

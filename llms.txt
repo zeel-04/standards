@@ -1,3 +1,0 @@
-# Standards
-
-> Internal standards across design, requirements, and more.
