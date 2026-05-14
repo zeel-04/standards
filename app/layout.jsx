@@ -23,7 +23,16 @@ const navbar = (
   <Navbar
     logo={<b>Standards</b>}
     projectLink="https://github.com/zeel-04/standards"
-  />
+  >
+    <a
+      href="/llms.txt"
+      target="_blank"
+      rel="noreferrer"
+      className="x:text-sm x:font-medium x:hover:text-primary-600 x:transition-colors"
+    >
+      llms.txt
+    </a>
+  </Navbar>
 )
 const footer = <Footer>{new Date().getFullYear()} © Standards.</Footer>
 
