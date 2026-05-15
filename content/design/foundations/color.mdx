@@ -1,0 +1,67 @@
+---
+title: Color roles
+description: Pick color by intent — brand, neutral, warning, danger — not by hue.
+---
+
+import { Button } from "@/components/ui/button"
+
+# Color roles
+
+Color roles describe the *intention* behind a color. Apply them to actions and UI states so the same hue always means the same thing — primary, secondary, warning, or dangerous.
+
+## Rules
+
+1. **Pick by role, not hue.** Reach for `brand` or `danger`, never for "blue" or "red". The token decides the color.
+2. **One role per surface.** A button is brand *or* danger, never both. Two competing roles in the same view dilute both.
+3. **Neutral is the default.** Most UI is neutral. Reserve coloured roles for the moments that need them — primary action, warning, error.
+
+## Roles in action
+
+<div className="not-prose my-6 rounded-lg border bg-card p-8">
+  <div className="flex flex-wrap items-end justify-center gap-8">
+    <div className="flex flex-col items-center gap-3">
+      <span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">Brand</span>
+      <div className="h-4 w-px bg-border" />
+      <Button>Create</Button>
+    </div>
+    <div className="flex flex-col items-center gap-3">
+      <span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">Neutral</span>
+      <div className="h-4 w-px bg-border" />
+      <Button variant="outline">Cancel</Button>
+    </div>
+    <div className="flex flex-col items-center gap-3">
+      <span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">Warning</span>
+      <div className="h-4 w-px bg-border" />
+      <Button variant="warning">Don't save</Button>
+    </div>
+    <div className="flex flex-col items-center gap-3">
+      <span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">Danger</span>
+      <div className="h-4 w-px bg-border" />
+      <Button variant="destructive">Delete</Button>
+    </div>
+  </div>
+</div>
+
+## The roles
+
+| Role | Swatch | Use for |
+|---|---|---|
+| `neutral` | <span className="inline-block size-3 rounded-full bg-neutral-300 align-middle" /> | Default text and secondary UI — secondary buttons, navigation, body copy. |
+| `brand` | <span className="inline-block size-3 rounded-full bg-blue-500 align-middle" /> | Primary actions and brand-forward moments. One per view. |
+| `information` | <span className="inline-block size-3 rounded-full bg-sky-500 align-middle" /> | Informational UI — info icons, "in progress" states, neutral callouts. |
+| `success` | <span className="inline-block size-3 rounded-full bg-green-500 align-middle" /> | Favourable outcomes — success toasts, completion checkmarks. |
+| `warning` | <span className="inline-block size-3 rounded-full bg-amber-400 align-middle" /> | Caution to prevent a mistake — "you have unsaved changes", destructive-but-reversible actions. |
+| `danger` | <span className="inline-block size-3 rounded-full bg-red-500 align-middle" /> | Destructive or serious error states — delete, failed payments, blocking errors. |
+
+## Mapping to shadcn variants
+
+The roles map onto Button variants like this:
+
+```tsx
+<Button>Create</Button>                       {/* brand */}
+<Button variant="outline">Cancel</Button>     {/* neutral */}
+<Button variant="warning">Don't save</Button> {/* warning */}
+<Button variant="destructive">Delete</Button> {/* danger */}
+```
+
+`information` and `success` show up in toasts, banners, and badges — not buttons. There's no `<Button variant="success">` because a green "Confirm" rarely earns its weight over the default brand button.

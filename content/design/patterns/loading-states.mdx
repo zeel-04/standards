@@ -1,0 +1,107 @@
+---
+title: Loading states
+description: When to show an inline spinner, when to show a skeleton, and when to show nothing at all.
+---
+
+import {
+  ButtonLoadingDemo,
+  BadgeLoadingDemo,
+  InputGroupLoadingDemo,
+  InlineRefreshDemo,
+} from '@/components/demos/loading-states'
+
+# Loading states
+
+## Rules
+
+1. **Inline spinner = the user just acted and is waiting.** Submit a form, save a draft, retry a request — the control that triggered the work shows the spinner.
+2. **Skeleton = the page is fetching its first paint.** Mirror the populated layout. Don't park a spinner in the middle of an empty container. See [Empty states](/design/patterns/empty-states#empty-vs-loading-vs-error).
+3. **No indicator at all if the work completes in under 300 ms.** A spinner that flashes for 100 ms reads as a glitch, not feedback.
+
+## Examples
+
+### Button
+
+The button that triggered the work owns the spinner. Disable it so the user can't double-submit. Use `data-icon="inline-start"` (spinner before label) for actions where the verb describes what's happening; `inline-end` reads better for "refresh"-style affordances.
+
+<Preview>
+  <ButtonLoadingDemo />
+</Preview>
+
+```tsx
+<Button disabled>
+  <Spinner />
+  Saving…
+</Button>
+
+<Button variant="outline" disabled>
+  Refresh
+  <Spinner />
+</Button>
+```
+
+Use a present-tense verb with an ellipsis (`Saving…`, not `Save`). The disabled state plus the label change is the real feedback — the spin is just confirmation.
+
+### Badge
+
+Use when a record has a transient status the user should notice but not act on. Size the spinner down to match the badge's text size (`size-3` for `text-xs`).
+
+<Preview>
+  <BadgeLoadingDemo />
+</Preview>
+
+```tsx
+<Badge>
+  <Spinner className="size-3" />
+  Syncing
+</Badge>
+```
+
+Don't use this for terminal states (`Failed`, `Done`) — those are icons, not spinners.
+
+### Input group
+
+For search-as-you-type or async validation, the spinner goes in the input's trailing slot. Keep previous results rendered underneath; replacing them with a skeleton on every keystroke is jarring.
+
+<Preview>
+  <InputGroupLoadingDemo />
+</Preview>
+
+```tsx
+<div className="relative">
+  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+  <Input className="pl-9 pr-9" />
+  <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+</div>
+```
+
+### Inline refresh
+
+When data is already on screen and a background fetch is in flight, surface a small `Refreshing` indicator next to the section title. Don't replace the visible rows.
+
+<Preview>
+  <InlineRefreshDemo />
+</Preview>
+
+```tsx
+<div className="flex items-center justify-between">
+  <h3>Activity</h3>
+  <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+    <Spinner className="size-3" />
+    Refreshing
+  </span>
+</div>
+```
+
+## Do / Don't
+
+**Do**
+- Disable the triggering control while its spinner is showing.
+- Match the spinner size to its surrounding text (`size-3` in badges/captions, `size-4` in buttons/inputs).
+- Add `aria-label="Loading"` to the spinner so screen readers can announce it.
+
+**Don't**
+- Don't park a spinner in the middle of an empty card for a first load. Use a skeleton.
+- Don't show a spinner *and* a toast *and* a banner for the same action. Pick the tightest scope.
+- Don't flash a spinner for sub-300 ms work. Debounce the indicator, not the request.
+- Don't replace already-rendered content with a spinner during a background refresh. Keep the stale data; mark it as refreshing.
