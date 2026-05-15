@@ -1,0 +1,99 @@
+---
+title: Writing
+description: Writing standards for requirements.
+---
+
+# Writing
+
+Three guiding principles, plus a short list of supporting rules. Every principle has at least one before/after example.
+
+## Principles
+
+1. Simple and easy to understand
+2. Short and sweet
+3. No redundancy
+
+---
+
+## 1. Simple and easy to understand
+
+Reach for notation when notation is unambiguous. A diagram or a short symbolic line often communicates a state change more clearly than a full sentence — and removes the chance of misreading the verb.
+
+**Before:**
+
+> WHEN a Requester submits a complete request, THE Request Workflow SHALL accept the submission and place the request in the `review_pending` state.
+
+**After:**
+
+> State → `review_pending`
+
+The notation form makes the transition the focal point. Anything the prose added beyond the transition (acceptance, who records what) is either obvious from context or belongs in a follow-up criterion that describes a real side effect.
+
+---
+
+## 2. Short and sweet
+
+Cut everything that doesn't change the meaning. If a reader can derive a sentence from the surrounding context, the sentence is overhead.
+
+**Before:**
+
+> Request Withdrawal
+>
+> User Story: As a Requester, I want to withdraw my own review-pending request, so that I can retract a submission before any Approver acts on it.
+>
+> Acceptance Criteria:
+>
+> - WHEN a Requester withdraws their own `review_pending` request, THE Request Workflow SHALL move the request to the `withdrawn` state. (Only `review_pending` requests SHALL be withdrawable.)
+> - WHILE a request is `withdrawn`, THE Request Workflow SHALL refuse any further actions on it. The withdraw option SHALL only be visible to the requestor.
+
+**After:**
+
+> Request Withdrawal
+>
+> User Story: As a Requester, I want to withdraw my own review-pending request, so that I can retract a submission before any Approver acts on it.
+>
+> Acceptance Criteria:
+>
+> - State `review_pending` → `withdrawn`
+> - WHILE a request is `withdrawn`, THE Request Workflow SHALL refuse any further actions on it. The withdraw option SHALL only be visible to the requestor.
+
+---
+
+## 3. No redundancy
+
+Don't restate something the document has already said — even implicitly.
+
+### Example A — universal rules belong in one place, not in every section
+
+If a rule applies to *every* story, repeating it in each story is noise. State it once, in a shared section or note.
+
+**Before** — appears at the bottom of every story that has a constraints table:
+
+> IF any constraint below fails, THEN THE Workflow SHALL refuse the action and inform the user which field is invalid.
+
+**After** — deleted from every story. The behavior is universal: validation failure refuses the action and reports the invalid field. Stating it once (in a top-level "Validation contract" note) is enough.
+
+### Example B — drop criteria that aren't observable from outside the system
+
+If an acceptance criterion describes an internal invariant a user or tester can't observe, it isn't acceptance — it's implementation. Move it to design notes or delete it.
+
+**Before** — Story 1 (Audit Trail), included these criteria:
+
+> - WHEN a state change is recorded, THE Audit Log entry SHALL be tied to that state change such that the entry exists if and only if the state change is durable; a state change without its audit entry SHALL never be observable.
+> - THE Audit Log entries SHALL be retained within the system itself, not exported to a third-party log store, so that the workflow remains the single source of historical truth.
+
+**After** — both removed. The first is an atomicity invariant (a database concern), the second is a deployment/architecture choice. Neither is something a reviewer can verify from a user-facing test.
+
+---
+
+## Supporting rules
+
+A handful of habits that follow from the three principles above:
+
+- **Separate rationale from contract.** Use blockquoted notes for the *why* and for cross-references between sections. Keep numbered acceptance criteria to the testable *what*. A reader scanning the criteria should never have to wade through context to find the contract.
+
+- **Use tables for repetitive structured data.** Field validations, role/permission matrices, status mappings — anything with a fixed set of columns repeated across rows reads faster as a table than as prose. Reserve prose for narrative that doesn't fit a grid.
+
+- **Be consistent with terminology and formatting.**
+
+- **One responsibility per section.** Each section should have one thing a reviewer can accept or reject.
