@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sticky Action Bar — Minimal Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+        font-size: 14px;
+        color: #111827;
+        background: #1f2937;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .stage {
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      /* Phone frame */
+      .phone {
+        width: 360px;
+        height: 720px;
+        background: #000;
+        border-radius: 40px;
+        padding: 10px;
+        box-shadow:
+          0 0 0 2px #2a2a2a,
+          0 30px 60px -20px rgba(0, 0, 0, 0.7);
+      }
+      .phone .screen {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        border-radius: 30px;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      /* Sticky top bar — same styling as desktop */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 14px 16px;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      header .left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      header .right {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .back {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        color: #111827;
+      }
+      .back:hover { background: #f3f4f6; }
+      .back svg { width: 16px; height: 16px; }
+
+      /* Scrollable body */
+      main {
+        overflow-y: auto;
+        padding: 20px 16px 24px;
+        background: #f6f7f9;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field label {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #374151;
+      }
+      .field input,
+      .field textarea,
+      .field select {
+        font: inherit;
+        padding: 10px 12px;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        outline: none;
+        width: 100%;
+      }
+      .field input:focus,
+      .field textarea:focus,
+      .field select:focus {
+        border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+      }
+      .field textarea { resize: vertical; min-height: 96px; }
+
+      /* Buttons — same as desktop */
+      .btn {
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 7px 12px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .btn-primary { background: #111827; color: #fff; }
+      .btn-primary:hover { background: #000; }
+      .btn-secondary {
+        background: #fff;
+        color: #111827;
+        border-color: #d1d5db;
+      }
+      .btn-secondary:hover { background: #f3f4f6; }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="phone">
+        <div class="screen">
+          <header>
+            <div class="left">
+              <button class="back" type="button" aria-label="Back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <h1>Edit project</h1>
+            </div>
+            <div class="right">
+              <button class="btn btn-secondary" type="button">Cancel</button>
+              <button class="btn btn-primary" type="button">Save</button>
+            </div>
+          </header>
+
+          <main>
+            <form class="form" onsubmit="event.preventDefault()">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" type="text" placeholder="Untitled project" />
+              </div>
+
+              <div class="field">
+                <label for="slug">Slug</label>
+                <input id="slug" type="text" placeholder="untitled-project" />
+              </div>
+
+              <div class="field">
+                <label for="visibility">Visibility</label>
+                <select id="visibility">
+                  <option>Private</option>
+                  <option>Team</option>
+                  <option>Public</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="desc">Description</label>
+                <textarea id="desc" placeholder="What is this project for?"></textarea>
+              </div>
+
+              <div class="field">
+                <label for="owner">Owner email</label>
+                <input id="owner" type="email" placeholder="you@company.com" />
+              </div>
+            </form>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

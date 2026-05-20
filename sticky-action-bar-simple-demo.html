@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sticky Action Bar — Minimal Realistic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+        font-size: 14px;
+        color: #111827;
+        background: #f6f7f9;
+      }
+
+      .screen {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        height: 100vh;
+        background: #fff;
+      }
+
+      /* Sticky top */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 24px;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      /* Scrollable middle */
+      main {
+        overflow-y: auto;
+        padding: 24px;
+        background: #f6f7f9;
+      }
+      .form {
+        max-width: 560px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field label {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #374151;
+      }
+      .field input,
+      .field textarea,
+      .field select {
+        font: inherit;
+        padding: 8px 10px;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        outline: none;
+      }
+      .field input:focus,
+      .field textarea:focus,
+      .field select:focus {
+        border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+      }
+      .field textarea { resize: vertical; min-height: 96px; }
+
+      /* Sticky bottom */
+      footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 12px 24px;
+        background: #fff;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      /* Buttons */
+      .btn {
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .btn-primary { background: #111827; color: #fff; }
+      .btn-primary:hover { background: #000; }
+      .btn-secondary {
+        background: #fff;
+        color: #111827;
+        border-color: #d1d5db;
+      }
+      .btn-secondary:hover { background: #f3f4f6; }
+    </style>
+  </head>
+  <body>
+    <div class="screen">
+      <header>
+        <h1>Edit project</h1>
+      </header>
+
+      <main>
+        <form class="form" onsubmit="event.preventDefault()">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" type="text" placeholder="Untitled project" />
+          </div>
+
+          <div class="field">
+            <label for="slug">Slug</label>
+            <input id="slug" type="text" placeholder="untitled-project" />
+          </div>
+
+          <div class="field">
+            <label for="visibility">Visibility</label>
+            <select id="visibility">
+              <option>Private</option>
+              <option>Team</option>
+              <option>Public</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="desc">Description</label>
+            <textarea id="desc" placeholder="What is this project for?"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="owner">Owner email</label>
+            <input id="owner" type="email" placeholder="you@company.com" />
+          </div>
+        </form>
+      </main>
+
+      <footer>
+        <button class="btn btn-secondary" type="button">Cancel</button>
+        <button class="btn btn-primary" type="button">Save</button>
+      </footer>
+    </div>
+  </body>
+</html>

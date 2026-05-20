@@ -1,0 +1,105 @@
+---
+title: Sticky elements
+description: Pinning headers, action bars, and other surfaces so they stay reachable while content scrolls.
+---
+
+import {
+  StickyAnatomyDemo,
+  StickyActionBarDesktopDemo,
+  StickyActionBarMobileTopDemo,
+  StickyActionBarMobileFooterDemo,
+} from '@/components/demos/sticky-elements'
+
+# Sticky elements
+
+Sticky elements stay in view while the rest of the screen scrolls. Use them only when something must always be visible — not by default.
+
+## Principle
+
+Most UI should scroll. Pin it only if losing it forces the user to scroll back:
+
+- **Reachability** — they need to act without scrolling to find the control. 
+  
+  > Example: *A long settings form: the user edits fields halfway down and needs Save/Cancel without scrolling back to the top.*
+- **Context** — they need to track where they are while reading. 
+
+  > Example: *A data table: column headers must stay visible so the user knows which column they're in while scrolling through hundreds of rows.*
+
+If neither applies, don't pin it. Sticky elements add visual weight and shrink the scrollable area — use them deliberately.
+
+## Anatomy
+
+Every sticky layout is the same three-row structure: a pinned top, a scrolling middle, a pinned bottom. Either pinned row is optional; the middle is always the one that scrolls.
+
+<Preview>
+  <StickyAnatomyDemo />
+</Preview>
+
+## Sticky action bars
+
+The most common use of stickiness: an edit, settings, or form screen where the user must always be able to reach **Save** and **Cancel** without scrolling. Title sits in the top bar; commit actions sit in the bottom bar (desktop) or top bar (mobile, short forms).
+
+### Desktop
+
+Title left, optional contextual actions right. Commit actions live in a sticky footer, right-aligned, with the primary action last.
+
+<Preview>
+  <StickyActionBarDesktopDemo />
+</Preview>
+
+### Mobile
+
+Mobile has two distinct conventions for sticky actions. Pick deliberately — they're not interchangeable.
+
+#### Pattern A — top-bar Save (short edits)
+
+Back, title, Cancel, and Save all sit in the sticky top bar. The body fills the rest of the screen. Matches the iOS Mail / Contacts / Settings convention.
+
+<Preview>
+  <StickyActionBarMobileTopDemo />
+</Preview>
+
+Use when:
+
+- The form is short (fits within ~1–2 screens).
+- Save is reversible and low-stakes (edit profile, rename a thing).
+- The screen is presented as a modal sheet over a list.
+
+Trade-off: the top-right corner is the hardest thumb reach on a phone. Acceptable for an action the user taps once per visit, painful for anything frequent.
+
+#### Pattern B — sticky footer CTA (commit / pay / submit)
+
+The primary action becomes a full-width button in a sticky footer, padded clear of the home indicator. Reserve this for weighty actions where the label should carry value ("Place order · $1,983.60", "Save changes").
+
+<Preview>
+  <StickyActionBarMobileFooterDemo />
+</Preview>
+
+Use when:
+
+- The action is irreversible, costly, or the screen's whole purpose (checkout, payment, publish).
+- The form is long enough that scrolling is expected.
+- You want the CTA to dominate — full-width signals weight.
+
+### Mobile-specific gotchas
+
+- **Thumb reach.** Top-right Save is the worst zone on a phone. Don't put a frequently-tapped action there.
+- **Keyboard behavior.** When the on-screen keyboard opens, the sticky footer must either stay above it or recede with the layout — never let the keyboard cover the Save button. Test this; it's the most common sticky-bar bug on mobile.
+
+## Do / Don't
+
+**Do**
+
+- Pin only what scrolling away from would cost the user.
+- Use a single primary action per sticky bar.
+- Disable Save until the form is actually modified.
+- Hide tab bars and floating action buttons when a screen enters edit mode with Cancel and Save actions.
+- Pad sticky mobile footers past the home indicator and test keyboard-open behavior.
+
+**Don't**
+
+- Don't put Save in both the header and the footer.
+- Don't combine a Create floating action button with Cancel and Save actions on the same screen — different mental models.
+- Don't make a sticky bar so tall it eats the scrolling area on short viewports.
+- Don't rely on `position: sticky` inside a parent that already has `overflow: hidden` and no defined height — it silently fails.
+- Don't pin a header just because the page is long. Long ≠ deserves stickiness.

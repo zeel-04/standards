@@ -1,0 +1,33 @@
+---
+title: Overlays
+description: How to choose between a modal dialog and a side sheet.
+---
+
+# Overlays
+
+Modals and sheets both keep users in context without navigating to a new page. Choosing the wrong one creates friction — a modal that scrolls feels cramped; a sheet for a two-field form feels heavy. The decision rule is straightforward: fit determines format.
+
+## Rules
+
+1. Use a modal when the content fits on one desktop screen without scrolling.
+2. Use a sheet when scrolling is required — longer forms, multi-step flows, or secondary editing panels.
+3. Never nest a modal inside another modal; open a sheet instead.
+
+## When to use each
+
+| Pattern | Use when |
+|---------|----------|
+| Modal | Confirmation prompt, short form, single focused action that fits one screen |
+| Sheet | Long or multi-section form, editing a record inline, content that requires scrolling |
+
+## Do / Don't
+
+**Do**
+- Keep modal content short enough that no scroll is ever needed
+- Use a sheet for secondary editing — e.g. opening record details alongside a list without losing your place
+- Close a sheet by sliding it away; close a modal with a clear dismiss action or backdrop click
+
+**Don't**
+- Put long forms in a modal and let them scroll
+- Open a new page for something that naturally belongs in an overlay
+- Stack modals — if a triggered action needs more space, escalate to a sheet

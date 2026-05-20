@@ -1,10 +1,10 @@
-import { readFile, writeFile, stat } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, stat } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const CONTENT_DIR = join(ROOT, 'content')
-const OUTPUT = join(ROOT, 'public', 'llms.txt')
+const PUBLIC_DIR = join(ROOT, 'public')
 const SITE_URL = process.env.SITE_URL?.replace(/\/$/, '') ?? ''
 
 const parseFrontmatter = (source) => {
@@ -144,30 +144,40 @@ const collectSection = async (dir, prefix, headingLevel = 3) => {
   return lines
 }
 
+const writeDomainFile = async (domainKey, label, items) => {
+  const domainDir = join(PUBLIC_DIR, domainKey)
+  await mkdir(domainDir, { recursive: true })
+  const out = [`# ${label}`, '', ...items, '']
+  const outputPath = join(domainDir, 'llms.txt')
+  await writeFile(outputPath, out.join('\n'))
+  console.log(`✓ wrote ${relative(ROOT, outputPath)} (${items.filter(l => l.startsWith('-')).length} pages)`)
+}
+
 const main = async () => {
   const rootFm = await readPage(join(CONTENT_DIR, 'index.mdx'))
   const rootMeta = await readMeta(CONTENT_DIR)
 
-  const topPages = []
-  const sections = []
+  const domainLines = []
 
   for (const [key, label] of rootMeta) {
-    if (await isFile(join(CONTENT_DIR, `${key}.mdx`))) {
-      topPages.push(await pageLine(CONTENT_DIR, key, label, ''))
-    } else if (await isDir(join(CONTENT_DIR, key))) {
+    if (await isDir(join(CONTENT_DIR, key))) {
       const items = await collectSection(join(CONTENT_DIR, key), `${key}/`)
-      if (items.length) sections.push({ label, items })
+      if (!items.length) continue
+      await writeDomainFile(key, label, items)
+      const domainFm = await readPage(join(CONTENT_DIR, key, 'index.mdx'))
+      const desc = domainFm.description ? `: ${domainFm.description}` : ''
+      domainLines.push(`- [${label}](${urlFor(`${key}/llms.txt`)})${desc}`)
     }
   }
 
-  const out = [`# ${rootFm.title === 'Overview' ? 'Standards' : rootFm.title || 'Standards'}`, '']
+  const rootTitle = rootFm.title === 'Overview' ? 'Standards' : rootFm.title || 'Standards'
+  const out = [`# ${rootTitle}`, '']
   if (rootFm.description) out.push(`> ${rootFm.description}`, '')
-  if (topPages.length) out.push('## Overview', '', ...topPages, '')
-  for (const { label, items } of sections) out.push(`## ${label}`, '', ...items, '')
+  if (domainLines.length) out.push('## Domains', '', ...domainLines, '')
 
-  const totalPages = topPages.length + sections.reduce((n, s) => n + s.items.length, 0)
-  await writeFile(OUTPUT, out.join('\n'))
-  console.log(`✓ wrote ${relative(ROOT, OUTPUT)} (${totalPages} pages)`)
+  const outputPath = join(PUBLIC_DIR, 'llms.txt')
+  await writeFile(outputPath, out.join('\n'))
+  console.log(`✓ wrote ${relative(ROOT, outputPath)} (${domainLines.length} domains)`)
 }
 
 main().catch((err) => {

@@ -52,6 +52,17 @@ Each rank is a scope. Step **one rung up** the ladder as you open a wider contai
 | **Fields** | 4 (16px) | `space-y-4`, `gap-4` | Between form fields or list rows inside a card. |
 | **Inline** | 2 (8px) | `gap-2` | Icon → label inside a button, chip, menu item. |
 
+## Mobile
+
+On screens narrower than `sm` (640px), the two outer ranks step down one rung. Fields and Inline don't change — they follow text size, not screen width.
+
+| Rank | Desktop | Mobile | Tailwind |
+|---|---|---|---|
+| **Page** | 48px (rung 12) | **32px (rung 8)** | `space-y-8 sm:space-y-12` |
+| **Card / panel** | 24px (rung 6) | **16px (rung 4)** | `p-4 sm:p-6` |
+| **Fields** | 16px (rung 4) | 16px (rung 4) | `space-y-4` |
+| **Inline** | 8px (rung 2) | 8px (rung 2) | `gap-2` |
+
 ## Inline rung in a dropdown
 
 Inside menus, items don't get rung-4 gaps between them — that's too loose. Stay at rung 2: tight item padding (`px-2 py-1.5`), `gap-2` between icon and label, and let the hover/selected background — not whitespace — separate items.
