@@ -8,6 +8,7 @@ import {
   StickyActionBarDesktopDemo,
   StickyActionBarMobileTopDemo,
   StickyActionBarMobileFooterDemo,
+  StickyTableDemo,
 } from '@/components/demos/sticky-elements'
 
 # Sticky elements
@@ -85,6 +86,18 @@ Use when:
 
 - **Thumb reach.** Top-right Save is the worst zone on a phone. Don't put a frequently-tapped action there.
 - **Keyboard behavior.** When the on-screen keyboard opens, the sticky footer must either stay above it or recede with the layout — never let the keyboard cover the Save button. Test this; it's the most common sticky-bar bug on mobile.
+
+## Sticky table headers
+
+Data tables with many rows need column headers to stay visible as the user scrolls. Combine a sticky `<thead>` with a fixed-height scrollable body, then place pagination **below** the scroll container — it belongs to the table as a whole, not to the visible body.
+
+<Preview className="px-0 py-8 items-start">
+  <StickyTableDemo />
+</Preview>
+
+- Set a **fixed height** on the scroll wrapper so the table doesn't grow to fit all rows.
+- Apply `sticky top-0` to `<thead>` and match its background to the page so row content doesn't bleed through on scroll.
+- Place pagination outside the scroll container — users need it reachable without scrolling the rows.
 
 ## Do / Don't
 

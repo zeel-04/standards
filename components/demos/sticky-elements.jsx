@@ -161,3 +161,107 @@ export function StickyActionBarMobileFooterDemo() {
     </MobileFrame>
   )
 }
+
+const TABLE_ROWS = [
+  { id: 1,  name: "Alice Johnson",   role: "Designer",         status: "Active",   joined: "Jan 2023" },
+  { id: 2,  name: "Ben Carter",      role: "Engineer",         status: "Active",   joined: "Mar 2023" },
+  { id: 3,  name: "Clara Diaz",      role: "Product Manager",  status: "On leave", joined: "Jun 2022" },
+  { id: 4,  name: "David Kim",       role: "Engineer",         status: "Active",   joined: "Sep 2023" },
+  { id: 5,  name: "Eva Müller",      role: "Designer",         status: "Active",   joined: "Nov 2022" },
+  { id: 6,  name: "Frank O'Brien",   role: "Engineer",         status: "Inactive", joined: "Feb 2021" },
+  { id: 7,  name: "Grace Lee",       role: "QA Engineer",      status: "Active",   joined: "Apr 2023" },
+  { id: 8,  name: "Henry Patel",     role: "Engineer",         status: "Active",   joined: "Jul 2022" },
+  { id: 9,  name: "Isla Nguyen",     role: "Product Manager",  status: "Active",   joined: "Oct 2023" },
+  { id: 10, name: "James Wright",    role: "Designer",         status: "Inactive", joined: "Dec 2021" },
+  { id: 11, name: "Kira Santos",     role: "Engineer",         status: "Active",   joined: "Jan 2024" },
+  { id: 12, name: "Liam Torres",     role: "Engineer",         status: "Active",   joined: "Mar 2022" },
+  { id: 13, name: "Maya Chen",       role: "QA Engineer",      status: "On leave", joined: "Aug 2023" },
+  { id: 14, name: "Noah Okafor",     role: "Designer",         status: "Active",   joined: "May 2023" },
+  { id: 15, name: "Olivia Park",     role: "Engineer",         status: "Active",   joined: "Feb 2024" },
+  { id: 16, name: "Pedro Alves",     role: "Product Manager",  status: "Inactive", joined: "Jun 2021" },
+  { id: 17, name: "Quinn Blake",     role: "Engineer",         status: "Active",   joined: "Sep 2022" },
+  { id: 18, name: "Rita Kovač",      role: "Designer",         status: "Active",   joined: "Nov 2023" },
+  { id: 19, name: "Sam Fernandez",   role: "QA Engineer",      status: "Active",   joined: "Jan 2022" },
+  { id: 20, name: "Tara Walsh",      role: "Engineer",         status: "Active",   joined: "Apr 2024" },
+  { id: 21, name: "Uma Krishnan",    role: "Product Manager",  status: "Active",   joined: "May 2022" },
+  { id: 22, name: "Victor Nwosu",    role: "Engineer",         status: "Active",   joined: "Jul 2023" },
+  { id: 23, name: "Wendy Larsson",   role: "Designer",         status: "On leave", joined: "Sep 2021" },
+  { id: 24, name: "Xander Bell",     role: "QA Engineer",      status: "Active",   joined: "Dec 2023" },
+  { id: 25, name: "Yara Hassan",     role: "Engineer",         status: "Active",   joined: "Feb 2023" },
+  { id: 26, name: "Zoe Tanaka",      role: "Designer",         status: "Inactive", joined: "Apr 2022" },
+  { id: 27, name: "Aaron Mills",     role: "Engineer",         status: "Active",   joined: "Jun 2023" },
+  { id: 28, name: "Bella Rossi",     role: "Product Manager",  status: "Active",   joined: "Aug 2022" },
+  { id: 29, name: "Carlos Vega",     role: "QA Engineer",      status: "Active",   joined: "Oct 2021" },
+  { id: 30, name: "Diana Osei",      role: "Engineer",         status: "On leave", joined: "Mar 2024" },
+]
+
+const ROWS_PER_PAGE = 10
+
+const STATUS_CLASSES = {
+  "Active":   "bg-green-100 text-green-800",
+  "Inactive": "bg-neutral-100 text-neutral-600",
+  "On leave": "bg-amber-100 text-amber-800",
+}
+
+export function StickyTableDemo() {
+  const [page, setPage] = React.useState(0)
+  const totalPages = Math.ceil(TABLE_ROWS.length / ROWS_PER_PAGE)
+  const start = page * ROWS_PER_PAGE
+  const visibleRows = TABLE_ROWS.slice(start, start + ROWS_PER_PAGE)
+
+  return (
+    <div className="w-full max-w-2xl overflow-hidden rounded-lg border bg-background shadow-sm text-sm">
+      <div className="h-64 overflow-auto">
+        <table className="w-full border-collapse">
+          <thead className="sticky top-0 z-10 bg-background">
+            <tr className="border-b">
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide w-10">#</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Role</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Status</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibleRows.map((row) => (
+              <tr key={row.id} className="border-b last:border-0 hover:bg-muted/40 transition-colors">
+                <td className="px-4 py-3 text-muted-foreground">{row.id}</td>
+                <td className="px-4 py-3 font-medium">{row.name}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.role}</td>
+                <td className="px-4 py-3">
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASSES[row.status]}`}>
+                    {row.status}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">{row.joined}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex items-center justify-between border-t bg-background px-4 py-3">
+        <span className="text-xs text-muted-foreground">
+          Showing {start + 1}–{Math.min(start + ROWS_PER_PAGE, TABLE_ROWS.length)} of {TABLE_ROWS.length}
+        </span>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 0}
+          >
+            Prev
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page === totalPages - 1}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
