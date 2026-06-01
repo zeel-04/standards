@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 
 export function StickyAnatomyDemo() {
   return (
@@ -32,6 +32,7 @@ export function StickyAnatomyDemo() {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 function FormBody({ idPrefix }) {
   return (
@@ -195,19 +196,25 @@ const TABLE_ROWS = [
   { id: 30, name: "Diana Osei",      role: "Engineer",         status: "On leave", joined: "Mar 2024" },
 ]
 
-const ROWS_PER_PAGE = 10
-
 const STATUS_CLASSES = {
-  "Active":   "bg-green-100 text-green-800",
-  "Inactive": "bg-neutral-100 text-neutral-600",
-  "On leave": "bg-amber-100 text-amber-800",
+  "Active":   "border border-green-600 text-green-700",
+  "Inactive": "border border-neutral-400 text-neutral-500",
+  "On leave": "border border-amber-500 text-amber-700",
 }
+
+const PAGE_SIZE_OPTIONS = ["10", "20", "50"]
 
 export function StickyTableDemo() {
   const [page, setPage] = React.useState(0)
-  const totalPages = Math.ceil(TABLE_ROWS.length / ROWS_PER_PAGE)
-  const start = page * ROWS_PER_PAGE
-  const visibleRows = TABLE_ROWS.slice(start, start + ROWS_PER_PAGE)
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const totalPages = Math.ceil(TABLE_ROWS.length / rowsPerPage)
+  const start = page * rowsPerPage
+  const visibleRows = TABLE_ROWS.slice(start, start + rowsPerPage)
+
+  function handleRowsPerPageChange(value) {
+    setRowsPerPage(Number(value))
+    setPage(0)
+  }
 
   return (
     <div className="w-full max-w-2xl overflow-hidden rounded-lg border bg-background shadow-sm text-sm">
@@ -215,11 +222,11 @@ export function StickyTableDemo() {
         <table className="w-full border-collapse">
           <thead className="sticky top-0 z-10 bg-background">
             <tr className="border-b">
-              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide w-10">#</th>
-              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</th>
-              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Role</th>
-              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Status</th>
-              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Joined</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground w-10">#</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Name</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Role</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Status</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Joined</th>
             </tr>
           </thead>
           <tbody>
@@ -239,27 +246,66 @@ export function StickyTableDemo() {
           </tbody>
         </table>
       </div>
-      <div className="flex items-center justify-between border-t bg-background px-4 py-3">
-        <span className="text-xs text-muted-foreground">
-          Showing {start + 1}–{Math.min(start + ROWS_PER_PAGE, TABLE_ROWS.length)} of {TABLE_ROWS.length}
-        </span>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((p) => p - 1)}
-            disabled={page === 0}
-          >
-            Prev
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((p) => p + 1)}
-            disabled={page === totalPages - 1}
-          >
-            Next
-          </Button>
+      <div className="flex items-center justify-end gap-4 border-t bg-background px-4 py-2.5">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span>Rows per page</span>
+          <Select value={String(rowsPerPage)} onValueChange={handleRowsPerPageChange}>
+            <SelectTrigger className="h-7 w-14 text-xs px-2">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PAGE_SIZE_OPTIONS.map((opt) => (
+                <SelectItem key={opt} value={opt} className="text-xs">{opt}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">
+            Page {page + 1} of {totalPages}
+          </span>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setPage(0)}
+              disabled={page === 0}
+              aria-label="First page"
+            >
+              <ChevronsLeft className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setPage((p) => p - 1)}
+              disabled={page === 0}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page === totalPages - 1}
+              aria-label="Next page"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setPage(totalPages - 1)}
+              disabled={page === totalPages - 1}
+              aria-label="Last page"
+            >
+              <ChevronsRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
