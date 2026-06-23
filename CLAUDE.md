@@ -46,3 +46,15 @@ Use the shadcn CLI or add files manually to `components/ui/`. Path alias `@/` ma
 ### Nextra configuration
 
 `next.config.mjs` wraps Next.js config with Nextra. `mdx-components.js` registers custom MDX components globally (making them available in all `.mdx` files without imports). `components.json` is the shadcn/ui config (Tailwind CSS variables enabled, Lucide icons).
+
+## Editing documentation copy - Verification Layer
+
+For any addition or modification to the copy of a docs page you must critique and verify your changes against the following rules:
+
+- **No redundancy**
+- **No explanation needed.** 
+- **Simple and easy to understand.** 
+- **Voice: professional and direct.** State rules plainly. No hedging, editorializing, or filler ("the decision is straightforward", "feels cramped"). This is documentation, not UI copy — don't apply the product Voice page's UI conventions (second person, contractions) here.
+- **One home per rule.** Each rule lives in exactly one normative section. Other sections (tables, Do/Don't) must add specifics — decision lookups, edge cases, examples — not restate rules in different words. Cut anything that only rewords what another section already says.
+- **Cross-link instead of repeat.** If another page owns a concept, link to it rather than restating it.
+- **Lead with scope.** Before rewriting, briefly map the redundancy and propose what to cut, merge, or keep — then proceed with the tightening (voice + de-duplication) by default. Only pause for direction if adding new coverage that introduces claims you can't verify.

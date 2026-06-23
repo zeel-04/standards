@@ -12,11 +12,14 @@ import {
 
 ## Rules
 
-1. **Match error surface to error scope.** Inline (form field), section (a card failed to load), page (the route failed), global (the connection dropped).
-2. **Tell the user what happened, why, and what to do.**
-3. **Preserve user input on error.** Never make someone re-type anything because of a failed submission.
+1. **Match error surface to error scope.** Use the tightest scope that fits the failure. See [Error scopes](#error-scopes) for the surface and example per scope.
+2. **Tell the user what happened, why, and what to do.** See [Copy guidelines](#copy-guidelines) for the order and examples.
+3. **Preserve user input on error.** Never make someone re-type anything because of a failed submission. Keep the form visible.
 4. **Do not use modals for errors** unless the error blocks *all* further interaction. Errors go inline or in a toast.
-5. **Toasts auto-dismiss for success (4–6s) but persist for errors until the user dismisses them.**
+5. **Persist error toasts until the user dismisses them.** Only success toasts auto-dismiss (4–6s).
+6. **Provide an explicit retry affordance for any transient failure** (network, timeout).
+7. **Use one surface per failure.** Never stack inline, toast, and banner for the same error.
+8. **Log the underlying error to observability; never leak stack traces into the UI.**
 
 ## Error scopes
 
@@ -89,17 +92,8 @@ Use for 404 / 403 / 500-class routes. Keep the nav chrome visible so users can r
 
 ### Global (toast)
 
-Persistent until dismissed. Include a retry action when the cause is transient (network).
+For transient causes, include a retry action in the toast.
 
-## Do / Don't
+## Styling
 
-**Do**
-- Keep the form visible on submission failure. Preserve every entered value.
-- Provide an explicit retry affordance for any transient failure.
-- Log the underlying error to observability, but don't leak stack traces into the UI.
-
-**Don't**
-- Don't use a modal for errors unless the error blocks the entire screen's further use.
-- Don't stack multiple error surfaces for the same failure (inline + toast + banner). Pick the tightest scope.
-- Don't use `destructive` styling for informational warnings. `destructive` means a destructive action; use `bg-muted` with a warning icon for cautions.
-- Don't auto-dismiss error toasts. Users need time to read them.
+`destructive` styling marks a destructive action, not a caution. For informational warnings, use `bg-muted` with a warning icon.

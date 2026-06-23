@@ -13,18 +13,19 @@ import {
 
 ## Rules
 
-1. **Label above input**, never floating or placeholder-as-label. Placeholders are for examples, not labels.
+1. **Label above input**, never floating or placeholder-as-label. Placeholders are for examples, not labels. Use sentence case, not mixed casing.
 2. **Single column on mobile.** Desktop may use two columns only when fields are clearly paired (first/last name, city/postal).
 3. **Validation on blur, not on every keystroke.** Show errors only after the user has attempted a value.
 4. **Error text sits immediately below the input** in `text-destructive`, with an icon if the error is critical.
 5. **Primary action is full-width on mobile**, right-aligned on desktop. Secondary actions are ghost or outline variants to its left.
-6. **Required fields are marked; optional ones aren't** (don't mark everything "(optional)").
+6. **Required fields are marked; optional ones aren't.** Use a subtle `*` or `(required)` suffix once per label; don't mark everything "(optional)".
+7. **Let users submit.** Don't disable the submit button on form validity alone — accept the submit and surface the failing fields.
 
 ## Anatomy
 
 A field is four stacked pieces. Render them in this order, always:
 
-1. **Label** — `text-sm font-medium`, sits above the input. `htmlFor` ties it to the input.
+1. **Label** — `text-sm font-medium`, sits above the input. Tie it to the input with `htmlFor`/`id`, or wrap the input in the `<label>` — not both.
 2. **Input** — the control. `border-input`, `rounded-md`, `h-9` for a standard input on desktop; `h-11` on mobile for touch.
 3. **Help text** (optional) — `text-xs text-muted-foreground`, sits below the input.
 4. **Error text** (conditional) — `text-xs text-destructive`, replaces help text when validation fails. Tied to the input with `aria-describedby`.
@@ -66,14 +67,14 @@ Field group spacing: `space-y-4` between fields, `space-y-8` between groups, `sp
 
 | Pattern | When | How it behaves |
 |---|---|---|
-| **Client-side, on blur** | Default for format checks (email shape, required, min length). | Validate when the field loses focus. Don't validate on every keystroke. |
+| **Client-side, on blur** | Default for format checks (email shape, required, min length). | Validate when the field loses focus. |
 | **Client-side, on submit** | Cross-field rules (password matches confirmation). | Check on submit; surface each failing field inline at once. |
 | **Async on blur** | Uniqueness checks (email taken, handle in use). | Debounce 300–500ms; show a subtle inline spinner on the field; surface the result in field help text. |
 | **Server-side, on submit** | Anything the client can't know. | Return per-field errors; map them to the same inline error slot, not an alert. |
 
 ### Inline vs summary
 
-- **Inline errors** — default for any error the user can fix by editing a field. Always surface at the field.
+- **Inline** — any error the user can fix by editing a field. The default.
 - **Summary** — only for form-level errors that don't map to a single field (e.g. "This request conflicts with request #422"). Place above the submit row, styled like an inline alert.
 
 <Preview>
@@ -117,18 +118,3 @@ A submit button walks four states. Never hide or replace the form.
 ```
 
 Show the spinner only if submission takes > 400ms.
-
-## Do / Don't
-
-**Do**
-- Associate every input with its label via `htmlFor` / `id`. Wrap the input in the `<label>` *or* link them — not both.
-- Preserve every entered value on error.
-- Make the primary action full-width on mobile; right-align on desktop with secondary actions to its left.
-- Mark required fields with a subtle `*` or `(required)` suffix, once per label.
-
-**Don't**
-- Don't put the label *inside* the input as a placeholder. Floating labels are a variant, not a standard.
-- Don't validate on every keystroke.
-- Don't disable the submit button based on "form validity" alone. Let them submit and surface the failing field(s).
-- Don't put error text in a toast. Field errors go at the field.
-- Don't mix label casing — sentence case everywhere.

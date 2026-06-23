@@ -4,6 +4,7 @@ const meta: MetaRecord = {
   index: { type: 'page', title: 'Home', display: 'hidden' },
   design: { type: 'page', title: 'Design' },
   requirements: { type: 'page', title: 'Requirements' },
+  code: { type: 'page', title: 'Code' },
 }
 
 export default meta

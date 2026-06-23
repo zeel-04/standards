@@ -14,15 +14,19 @@ import {
 
 ## Rules
 
-1. **Inline spinner = the user just acted and is waiting.** Submit a form, save a draft, retry a request — the control that triggered the work shows the spinner.
-2. **Skeleton = the page is fetching its first paint.** Mirror the populated layout. Don't park a spinner in the middle of an empty container. See [Empty states](/design/patterns/empty-states#empty-vs-loading-vs-error).
-3. **No indicator at all if the work completes in under 300 ms.** A spinner that flashes for 100 ms reads as a glitch, not feedback.
+1. **Inline spinner = the user just acted and is waiting.** Submit a form, save a draft, retry a request — the control that triggered the work shows the spinner. Disable that control while the spinner shows so the action can't fire twice.
+2. **Skeleton = the page is fetching its first paint.** Mirror the populated layout. Never park a spinner in an empty container. See [Empty states](/design/patterns/empty-states#empty-vs-loading-vs-error).
+3. **No indicator at all if the work completes in under 300 ms.** A spinner that flashes for 100 ms reads as a glitch, not feedback. Debounce the indicator, not the request.
+4. **One indicator per action.** Never stack a spinner, a toast, and a banner for the same work — pick the tightest scope.
+5. **Background refresh keeps the stale data on screen.** Mark it as refreshing; never replace rendered content with a spinner or skeleton.
+6. **Match the spinner size to its surrounding text** — `size-3` in badges and captions, `size-4` in buttons and inputs.
+7. **Give the spinner `aria-label="Loading"`** so screen readers announce it.
 
 ## Examples
 
 ### Button
 
-The button that triggered the work owns the spinner. Disable it so the user can't double-submit. Use `data-icon="inline-start"` (spinner before label) for actions where the verb describes what's happening; `inline-end` reads better for "refresh"-style affordances.
+Use `data-icon="inline-start"` (spinner before label) for actions where the verb describes what's happening; `inline-end` reads better for "refresh"-style affordances.
 
 <Preview>
   <ButtonLoadingDemo />
@@ -40,11 +44,11 @@ The button that triggered the work owns the spinner. Disable it so the user can'
 </Button>
 ```
 
-Use a present-tense verb with an ellipsis (`Saving…`, not `Save`). The disabled state plus the label change is the real feedback — the spin is just confirmation.
+Use a present-tense verb with an ellipsis (`Saving…`, not `Save`). The disabled state plus the label change is the real feedback; the spin only confirms it.
 
 ### Badge
 
-Use when a record has a transient status the user should notice but not act on. Size the spinner down to match the badge's text size (`size-3` for `text-xs`).
+Use when a record has a transient status the user should notice but not act on.
 
 <Preview>
   <BadgeLoadingDemo />
@@ -77,7 +81,7 @@ For search-as-you-type or async validation, the spinner goes in the input's trai
 
 ### Inline refresh
 
-When data is already on screen and a background fetch is in flight, surface a small `Refreshing` indicator next to the section title. Don't replace the visible rows.
+When data is already on screen and a background fetch is in flight, surface a small `Refreshing` indicator next to the section title.
 
 <Preview>
   <InlineRefreshDemo />
@@ -92,16 +96,3 @@ When data is already on screen and a background fetch is in flight, surface a sm
   </span>
 </div>
 ```
-
-## Do / Don't
-
-**Do**
-- Disable the triggering control while its spinner is showing.
-- Match the spinner size to its surrounding text (`size-3` in badges/captions, `size-4` in buttons/inputs).
-- Add `aria-label="Loading"` to the spinner so screen readers can announce it.
-
-**Don't**
-- Don't park a spinner in the middle of an empty card for a first load. Use a skeleton.
-- Don't show a spinner *and* a toast *and* a banner for the same action. Pick the tightest scope.
-- Don't flash a spinner for sub-300 ms work. Debounce the indicator, not the request.
-- Don't replace already-rendered content with a spinner during a background refresh. Keep the stale data; mark it as refreshing.

@@ -5,29 +5,14 @@ description: How to choose between a modal dialog and a side sheet.
 
 # Overlays
 
-Modals and sheets both keep users in context without navigating to a new page. Choosing the wrong one creates friction — a modal that scrolls feels cramped; a sheet for a two-field form feels heavy. The decision rule is straightforward: fit determines format.
+Modals and sheets both keep users in context without navigating to a new page. Fit determines which to use: the more content and steps an interaction carries, the more space the overlay needs.
 
 ## Rules
 
-1. Use a modal when the content fits on one desktop screen without scrolling.
-2. Use a sheet when scrolling is required — longer forms, multi-step flows, or secondary editing panels.
-3. Never nest a modal inside another modal; open a sheet instead.
+1. Use an overlay, not a new page, when a task is secondary to what's behind it. Navigate to a page when the content is a destination in its own right.
+2. Use a modal when the content fits one desktop screen without scrolling — a confirmation, a short form, or a single focused action.
+3. Use a sheet when the content needs to scroll — a long or multi-step form, or a record edited inline alongside a list.
+4. Never nest a modal inside another modal. If a triggered action needs more space, escalate to a sheet.
+5. Close a modal with a clear dismiss action or backdrop click; close a sheet by sliding it away.
 
-## When to use each
-
-| Pattern | Use when |
-|---------|----------|
-| Modal | Confirmation prompt, short form, single focused action that fits one screen |
-| Sheet | Long or multi-section form, editing a record inline, content that requires scrolling |
-
-## Do / Don't
-
-**Do**
-- Keep modal content short enough that no scroll is ever needed
-- Use a sheet for secondary editing — e.g. opening record details alongside a list without losing your place
-- Close a sheet by sliding it away; close a modal with a clear dismiss action or backdrop click
-
-**Don't**
-- Put long forms in a modal and let them scroll
-- Open a new page for something that naturally belongs in an overlay
-- Stack modals — if a triggered action needs more space, escalate to a sheet
+A confirmation dialog is a modal — see [Confirmations](/design/patterns/confirmations) for its content and button rules.
