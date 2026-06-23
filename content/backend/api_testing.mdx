@@ -1,0 +1,247 @@
+---
+title: API Testing
+description: Data-driven API testing standard for HR Tool & Expensio.
+---
+
+# API Testing Standard
+HR Tool & Expensio — Internal Engineering Standard
+
+---
+
+## 1. Overview
+
+We use data-driven API testing: test logic is written once, test cases are stored as JSON. Adding a new test case means adding a JSON object — no Python changes needed.
+
+The HR Tool resources, endpoints, and IDs used throughout this page are examples only. The standard applies to any API — substitute your own resources.
+
+---
+
+## 2. Folder Structure
+
+One flat `.json` file per resource, named after the first URL path segment. Only create a subfolder if a resource needs multiple distinct files.
+
+```
+tests/
+├── test_data/
+│   ├── auth.json
+│   ├── departments.json
+│   ├── employees.json
+│   ├── employee-documents.json
+│   ├── employee-status-history.json
+│   ├── employee-transfers.json
+│   ├── organizations.json
+│   ├── process-templates.json
+│   ├── processes.json
+│   ├── task-templates.json
+│   └── tasks.json
+├── conftest.py
+└── test_hr_api.py
+```
+
+---
+
+## 3. Test Case JSON Schema
+
+Each file contains an array of test case objects.
+
+```json
+[
+  {
+    "id":              "TASK-CREATE-001",
+    "description":     "Create task with valid payload",
+    "method":          "POST",
+    "endpoint":        "/api/tasks/",
+    "headers":         { "Authorization": "Bearer {auth_token}" },
+    "payload":         { "title": "Review documents", "process_id": 1 },
+    "query_params":    {},
+    "expected_status": 201,
+    "expected_body":   { "title": "Review documents", "status": "pending" }
+  }
+]
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `id` | Yes | Unique ID. Format: `RESOURCE-ACTION-NNN` |
+| `description` | Yes | One-line plain English summary |
+| `method` | Yes | `GET`, `POST`, `PATCH`, `PUT`, `DELETE` |
+| `endpoint` | Yes | URL path. Use real IDs or `{placeholder}` variables |
+| `headers` | Yes | Include `Authorization`. Use `{}` if none needed |
+| `payload` | Yes | Request body for POST/PATCH/PUT. `null` for GET/DELETE |
+| `query_params` | Yes | URL query params. Use `{}` if none |
+| `expected_status` | Yes | Expected HTTP status code |
+| `expected_body` | Yes | Subset of keys to assert. `null` to skip body check |
+
+---
+
+## 4. Naming Convention
+
+Format: `RESOURCE-ACTION-NNN`
+
+| Action | HTTP Method | Example ID |
+|---|---|---|
+| `LIST` | GET (collection) | `EMP-LIST-001` |
+| `DETAIL` | GET (single) | `EMP-DETAIL-001` |
+| `CREATE` | POST | `EMP-CREATE-001` |
+| `UPDATE` | PATCH / PUT | `EMP-UPDATE-001` |
+| `DELETE` | DELETE | `EMP-DELETE-001` |
+| `ACTION` | POST (custom action) | `TASK-COMPLETE-001` |
+
+Number sequentially per action group starting at `001`. Example: `EMP-CREATE-001` is the happy path, `EMP-CREATE-002` is missing required field, `EMP-CREATE-003` is duplicate email.
+
+---
+
+## 5. Assertion Rules
+
+**Status code** — always assert. Never optional.
+
+**Body — subset match** — `expected_body` only checks the keys you declare. Tests will not break when the API adds new response fields.
+
+```json
+// Asserts only that "status" equals "completed".
+// Other fields like created_at, updated_at are ignored.
+"expected_body": { "status": "completed" }
+```
+
+**Skip body check** — set `expected_body` to `null` for `204 No Content` responses and cases where only the status code matters.
+
+---
+
+## 6. Case Coverage
+
+Every endpoint must have at minimum:
+
+- **Happy path** — valid input, expected success response
+- **Auth failure** — missing or invalid token (expect `401`)
+- **Not found** — non-existent ID (expect `404`, GET/PATCH/DELETE only)
+- **Validation failure** — missing or invalid field (expect `400`, POST/PATCH only)
+
+RBAC cases (`403 Forbidden`) are added when the endpoint enforces role-based access.
+
+---
+
+## 7. Full Example — `tasks.json`
+
+```json
+[
+  {
+    "id": "TASK-LIST-001",
+    "description": "List tasks - authenticated, no filters",
+    "method": "GET",
+    "endpoint": "/api/tasks/",
+    "headers": { "Authorization": "Bearer {auth_token}" },
+    "payload": null,
+    "query_params": {},
+    "expected_status": 200,
+    "expected_body": { "count": null, "results": [] }
+  },
+  {
+    "id": "TASK-LIST-002",
+    "description": "List tasks - unauthenticated",
+    "method": "GET",
+    "endpoint": "/api/tasks/",
+    "headers": {},
+    "payload": null,
+    "query_params": {},
+    "expected_status": 401,
+    "expected_body": { "detail": "Authentication credentials were not provided." }
+  },
+  {
+    "id": "TASK-CREATE-001",
+    "description": "Create task with valid payload",
+    "method": "POST",
+    "endpoint": "/api/tasks/",
+    "headers": { "Authorization": "Bearer {auth_token}" },
+    "payload": { "title": "Review documents", "process_id": 1 },
+    "query_params": {},
+    "expected_status": 201,
+    "expected_body": { "title": "Review documents", "status": "pending" }
+  },
+  {
+    "id": "TASK-CREATE-002",
+    "description": "Create task - missing required field",
+    "method": "POST",
+    "endpoint": "/api/tasks/",
+    "headers": { "Authorization": "Bearer {auth_token}" },
+    "payload": {},
+    "query_params": {},
+    "expected_status": 400,
+    "expected_body": { "title": ["This field is required."] }
+  },
+  {
+    "id": "TASK-COMPLETE-001",
+    "description": "Mark task as complete",
+    "method": "POST",
+    "endpoint": "/api/tasks/1/complete/",
+    "headers": { "Authorization": "Bearer {auth_token}" },
+    "payload": { "notes": "All approvals obtained" },
+    "query_params": {},
+    "expected_status": 200,
+    "expected_body": { "id": 1, "status": "completed" }
+  }
+]
+```
+
+---
+
+## 8. Test Runner Setup
+
+### `conftest.py`
+
+```python
+import json, glob, pytest, requests
+
+BASE_URL = "http://localhost:8000"
+
+def load_all_cases():
+    cases = []
+    for path in glob.glob("tests/test_data/*.json"):
+        with open(path) as f:
+            cases.extend(json.load(f))
+    return cases
+
+def pytest_generate_tests(metafunc):
+    if "case" in metafunc.fixturenames:
+        cases = load_all_cases()
+        metafunc.parametrize("case", cases, ids=[c["id"] for c in cases])
+
+@pytest.fixture
+def api():
+    session = requests.Session()
+    session.base_url = BASE_URL
+    return session
+```
+
+### `test_hr_api.py`
+
+```python
+def test_api_case(api, case):
+    url = api.base_url + case["endpoint"]
+    response = api.request(
+        case["method"], url,
+        json=case["payload"],
+        headers=case["headers"],
+        params=case.get("query_params", {})
+    )
+
+    assert response.status_code == case["expected_status"]
+
+    if case["expected_body"] is not None:
+        actual = response.json()
+        for key, value in case["expected_body"].items():
+            if value is not None:
+                assert actual[key] == value
+```
+
+### Running Tests
+
+```bash
+# All cases
+pytest tests/test_hr_api.py -v
+
+# All cases for a resource
+pytest tests/test_hr_api.py -v -k "TASK"
+
+# Single case
+pytest tests/test_hr_api.py -v -k "TASK-CREATE-001"
+```

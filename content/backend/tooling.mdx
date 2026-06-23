@@ -1,0 +1,115 @@
+---
+title: Tooling
+description: Linting, formatting, import sorting, type checking, and project inspection standards for Python projects.
+---
+
+## Overview
+
+| Tool | Role |
+|------|------|
+| [Ruff](https://docs.astral.sh/ruff/) | Lint + format |
+| [isort](https://pycqa.github.io/isort/) | Import sorting |
+| [Pyrefly](https://pyrefly.org/) | Type checking |
+
+All three run as pre-commit hooks and in CI.
+
+---
+
+## Configuration
+
+All tool config lives in `pyproject.toml`.
+
+```toml
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pyrefly]
+python_version = "3.12"
+```
+
+---
+
+## Usage
+
+```bash
+# Lint
+ruff check .
+
+# Fix auto-fixable lint issues
+ruff check --fix .
+
+# Format
+ruff format .
+
+# Sort imports
+isort .
+
+# Type check
+pyrefly check
+```
+
+---
+
+## Pre-commit
+
+Repos to configure in `.pre-commit-config.yaml`:
+
+- [astral-sh/ruff-pre-commit](https://github.com/astral-sh/ruff-pre-commit) — hooks: `ruff` (with `args: [--fix]`), `ruff-format`
+- [pycqa/isort](https://github.com/pycqa/isort) — hook: `isort`
+- [facebook/pyrefly](https://github.com/facebook/pyrefly) — hook: `pyrefly`
+
+After adding the repos, run `autoupdate` to pin to the latest release tags, then install:
+
+```bash
+pre-commit autoupdate
+pre-commit install
+```
+
+Re-run `pre-commit autoupdate` periodically to pull newer releases.
+
+---
+
+## Editor (VS Code)
+
+Install the [Ruff extension](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff) and add to `.vscode/settings.json`:
+
+```json
+{
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  }
+}
+```
+
+For Pyrefly, install the [Pyrefly extension](https://marketplace.visualstudio.com/items?itemName=meta.pyrefly).
+
+---
+
+## Inspection
+
+Two management commands for exploring the project without reading source files.
+
+**DB schema** — prints every model, its fields, types, relations, and choice values:
+
+```bash
+cd backend && uv run python manage.py print_schema
+```
+
+**API endpoints** — lists every registered URL with its HTTP methods and view name:
+
+```bash
+cd backend && uv run python manage.py show_urls
+```
+
+Run these when onboarding, before writing a new feature, or to verify a migration added the expected fields.

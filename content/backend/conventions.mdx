@@ -1,0 +1,60 @@
+---
+title: Conventions
+description: Naming conventions, file structure, and folder organization standards.
+---
+
+## Tests structure
+
+```
+tests/
+├── test_data/          # One .json file per resource (named after the first URL path segment)
+│   ├── auth.json
+│   ├── employees.json
+│   └── tasks.json
+├── conftest.py         # Fixture setup and parametrize hook
+└── test_hr_api.py      # Single test function — parametrized over all cases
+```
+
+See [API Testing](/code/api_testing) for the full data-driven testing standard.
+
+---
+
+## Django app structure
+
+```
+api/
+└── auth/
+    ├── migrations/
+    │   └── __init__.py
+    ├── tests/
+    │   ├── __init__.py
+    │   ├── test_models.py
+    │   ├── test_views.py
+    │   ├── test_services.py
+    │   └── test_serializers.py
+    ├── __init__.py
+    ├── admin.py
+    ├── apps.py
+    ├── models.py
+    ├── views.py           # Request/response only — no business logic
+    ├── urls.py
+    ├── serializers.py     # DRF serializers — API input/output validation
+    ├── schema.py          # Internal DTOs as @dataclass(slots=True); Pydantic only for untrusted external data
+    ├── services.py        # Business logic, decoupled from views (can be a folder: services/__init__.py, services/auth.py, …)
+    ├── types.py           # Type aliases, Literal, TypedDict, Enum
+    ├── permissions.py     # DRF custom permission classes
+    ├── exceptions.py      # Custom exception classes
+    └── utils.py           # App-scoped helper functions
+```
+
+---
+
+## Comments
+
+Only add comments where the complexity warrants it — not by default.
+
+| Level | When to add |
+| --- | --- |
+| Module | Non-obvious purpose or constraints that aren't clear from the filename |
+| Class | Complex invariants, ownership rules, or non-obvious design decisions |
+| Function | Non-obvious logic, edge cases, or why a specific approach was chosen |

@@ -1,18 +1,18 @@
 ---
 title: Overlays
-description: How to choose between a modal dialog and a side sheet.
+description: How to choose between a modal and a full page.
 ---
 
 # Overlays
 
-Modals and sheets both keep users in context without navigating to a new page. Fit determines which to use: the more content and steps an interaction carries, the more space the overlay needs.
+Modals keep users in context without navigating to a new page. Size determines which modal to use: simple actions use a standard modal; complex or long content uses a large one.
 
 ## Rules
 
-1. Use an overlay, not a new page, when a task is secondary to what's behind it. Navigate to a page when the content is a destination in its own right.
-2. Use a modal when the content fits one desktop screen without scrolling — a confirmation, a short form, or a single focused action.
-3. Use a sheet when the content needs to scroll — a long or multi-step form, or a record edited inline alongside a list.
-4. Never nest a modal inside another modal. If a triggered action needs more space, escalate to a sheet.
-5. Close a modal with a clear dismiss action or backdrop click; close a sheet by sliding it away.
+1. Use an overlay when a task is secondary to what's behind it. Navigate to a page when the content is a destination in its own right.
+2. Use a standard modal for confirmations, short forms, and single focused actions.
+3. Use a large modal (80% of the viewport) for complex or long-scrolling content — multi-step forms, detail views, and records with multiple sections.
+4. Never nest a modal inside another modal.
+5. Close with a dismiss action or backdrop click.
 
 A confirmation dialog is a modal — see [Confirmations](/design/patterns/confirmations) for its content and button rules.
