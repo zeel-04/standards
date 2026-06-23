@@ -7,13 +7,20 @@ description: Linting, formatting, import sorting, type checking, and project ins
 
 | Tool | Role |
 |------|------|
+| [uv](https://docs.astral.sh/uv/) | Package + environment management |
 | [Ruff](https://docs.astral.sh/ruff/) | Lint + format |
 | [isort](https://pycqa.github.io/isort/) | Import sorting |
 | [Pyrefly](https://pyrefly.org/) | Type checking |
+| [Loguru](https://loguru.readthedocs.io/) | Structured application logging |
+| [Better Stack](https://betterstack.com/) | Log shipping + health monitoring |
 
-All three run as pre-commit hooks and in CI.
+Ruff, isort, and Pyrefly run as pre-commit hooks and in CI.
 
 ---
+
+## uv
+
+[uv](https://docs.astral.sh/uv/) replaces pip, pyenv, pip-tools, and virtualenv.
 
 ## Configuration
 
@@ -113,3 +120,51 @@ cd backend && uv run python manage.py show_urls
 ```
 
 Run these when onboarding, before writing a new feature, or to verify a migration added the expected fields.
+
+---
+
+## Logger
+
+[Loguru](https://loguru.readthedocs.io/) provides structured logging with a single pre-configured `logger` instance.
+
+```python
+from loguru import logger
+
+logger.info("order created", order_id=order.id, user_id=request.user.id)
+logger.error("payment failed", exc_info=True)
+```
+
+Log structured key-value pairs as keyword arguments — not interpolated strings. This keeps logs machine-readable in Better Stack.
+
+---
+
+## Better Stack
+
+### Logs
+
+Logs ship to [Logtail](https://betterstack.com/logtail) via `logtail-python`. The handler is wired into Django's `LOGGING` setting — no per-module setup required. Set the source token in `.env`:
+
+```env
+BETTERSTACK_SOURCE_TOKEN=<token>
+```
+
+In production, all `INFO`-and-above log records are forwarded automatically. Locally, logs write to stdout only.
+
+### Health
+
+[Better Uptime](https://betterstack.com/better-uptime) monitors the `/health/` endpoint for uptime and sends heartbeat pings for scheduled jobs.
+
+For cron jobs and management commands, ping the heartbeat URL at the start of each run:
+
+```python
+import httpx
+import os
+
+httpx.get(os.environ["BETTERSTACK_HEARTBEAT_URL"])
+```
+
+Set the heartbeat URL in `.env`:
+
+```env
+BETTERSTACK_HEARTBEAT_URL=<url>
+```
