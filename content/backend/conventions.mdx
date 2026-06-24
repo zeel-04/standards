@@ -46,7 +46,7 @@ api/
     ├── schema.py          # Internal DTOs as @dataclass(slots=True); Pydantic only for untrusted external data
     ├── services.py        # Business logic, decoupled from views (can be a folder: services/__init__.py, services/auth.py, …)
     ├── types.py           # Type aliases, Literal, TypedDict, Enum
-    ├── permissions.py     # DRF custom permission classes
+    ├── permissions.py     # DRF custom permission classes — always a root-level file.
     ├── exceptions.py      # Custom exception classes
     └── utils.py           # App-scoped helper functions
 ```
