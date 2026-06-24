@@ -1,10 +1,9 @@
 ---
 title: API Testing
-description: Data-driven API testing standard for HR Tool & Expensio.
+description: Data-driven API testing standard for Django REST APIs.
 ---
 
 # API Testing Standard
-HR Tool & Expensio — Internal Engineering Standard
 
 ---
 
@@ -12,30 +11,32 @@ HR Tool & Expensio — Internal Engineering Standard
 
 We use data-driven API testing: test logic is written once, test cases are stored as JSON. Adding a new test case means adding a JSON object — no Python changes needed.
 
-The HR Tool resources, endpoints, and IDs used throughout this page are examples only. The standard applies to any API — substitute your own resources.
+Resources, endpoints, and IDs used throughout this page are from the HR Tool — examples only. The standard applies to any Django app.
 
 ---
 
 ## 2. Folder Structure
 
-One flat `.json` file per resource, named after the first URL path segment. Only create a subfolder if a resource needs multiple distinct files.
+One `.json` file per resource, organized by Django app then named after the URL resource segment. The layout mirrors the URL structure: `/api/<django_app>/<segment>/` → `test_data/<django_app>/<segment>.json`.
 
 ```
 tests/
 ├── test_data/
-│   ├── auth.json
-│   ├── departments.json
-│   ├── employees.json
-│   ├── employee-documents.json
-│   ├── employee-status-history.json
-│   ├── employee-transfers.json
-│   ├── organizations.json
-│   ├── process-templates.json
-│   ├── processes.json
-│   ├── task-templates.json
-│   └── tasks.json
+│   ├── auth/
+│   │   └── tokens.json
+│   └── hr/
+│       ├── departments.json
+│       ├── employees.json
+│       ├── employee-documents.json
+│       ├── employee-status-history.json
+│       ├── employee-transfers.json
+│       ├── organizations.json
+│       ├── process-templates.json
+│       ├── processes.json
+│       ├── task-templates.json
+│       └── tasks.json
 ├── conftest.py
-└── test_hr_api.py
+└── test_api.py
 ```
 
 ---
@@ -50,7 +51,7 @@ Each file contains an array of test case objects.
     "id":              "TASK-CREATE-001",
     "description":     "Create task with valid payload",
     "method":          "POST",
-    "endpoint":        "/api/tasks/",
+    "endpoint":        "/api/hr/tasks/",
     "headers":         { "Authorization": "Bearer {auth_token}" },
     "payload":         { "title": "Review documents", "process_id": 1 },
     "query_params":    {},
@@ -120,7 +121,7 @@ RBAC cases (`403 Forbidden`) are added when the endpoint enforces role-based acc
 
 ---
 
-## 7. Full Example — `tasks.json`
+## 7. Full Example — `hr/tasks.json`
 
 ```json
 [
@@ -128,7 +129,7 @@ RBAC cases (`403 Forbidden`) are added when the endpoint enforces role-based acc
     "id": "TASK-LIST-001",
     "description": "List tasks - authenticated, no filters",
     "method": "GET",
-    "endpoint": "/api/tasks/",
+    "endpoint": "/api/hr/tasks/",
     "headers": { "Authorization": "Bearer {auth_token}" },
     "payload": null,
     "query_params": {},
@@ -139,7 +140,7 @@ RBAC cases (`403 Forbidden`) are added when the endpoint enforces role-based acc
     "id": "TASK-LIST-002",
     "description": "List tasks - unauthenticated",
     "method": "GET",
-    "endpoint": "/api/tasks/",
+    "endpoint": "/api/hr/tasks/",
     "headers": {},
     "payload": null,
     "query_params": {},
@@ -150,7 +151,7 @@ RBAC cases (`403 Forbidden`) are added when the endpoint enforces role-based acc
     "id": "TASK-CREATE-001",
     "description": "Create task with valid payload",
     "method": "POST",
-    "endpoint": "/api/tasks/",
+    "endpoint": "/api/hr/tasks/",
     "headers": { "Authorization": "Bearer {auth_token}" },
     "payload": { "title": "Review documents", "process_id": 1 },
     "query_params": {},
@@ -161,7 +162,7 @@ RBAC cases (`403 Forbidden`) are added when the endpoint enforces role-based acc
     "id": "TASK-CREATE-002",
     "description": "Create task - missing required field",
     "method": "POST",
-    "endpoint": "/api/tasks/",
+    "endpoint": "/api/hr/tasks/",
     "headers": { "Authorization": "Bearer {auth_token}" },
     "payload": {},
     "query_params": {},
@@ -172,7 +173,7 @@ RBAC cases (`403 Forbidden`) are added when the endpoint enforces role-based acc
     "id": "TASK-COMPLETE-001",
     "description": "Mark task as complete",
     "method": "POST",
-    "endpoint": "/api/tasks/1/complete/",
+    "endpoint": "/api/hr/tasks/1/complete/",
     "headers": { "Authorization": "Bearer {auth_token}" },
     "payload": { "notes": "All approvals obtained" },
     "query_params": {},
@@ -195,7 +196,7 @@ BASE_URL = "http://localhost:8000"
 
 def load_all_cases():
     cases = []
-    for path in glob.glob("tests/test_data/*.json"):
+    for path in glob.glob("tests/test_data/**/*.json", recursive=True):
         with open(path) as f:
             cases.extend(json.load(f))
     return cases
@@ -212,7 +213,7 @@ def api():
     return session
 ```
 
-### `test_hr_api.py`
+### `test_api.py`
 
 ```python
 def test_api_case(api, case):
@@ -237,11 +238,11 @@ def test_api_case(api, case):
 
 ```bash
 # All cases
-pytest tests/test_hr_api.py -v
+pytest tests/test_api.py -v
 
 # All cases for a resource
-pytest tests/test_hr_api.py -v -k "TASK"
+pytest tests/test_api.py -v -k "TASK"
 
 # Single case
-pytest tests/test_hr_api.py -v -k "TASK-CREATE-001"
+pytest tests/test_api.py -v -k "TASK-CREATE-001"
 ```

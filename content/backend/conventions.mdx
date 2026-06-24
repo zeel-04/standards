@@ -5,14 +5,18 @@ description: Naming conventions, file structure, and folder organization standar
 
 ## Tests structure
 
+One folder per Django app inside `test_data/`. Each file inside is named after the URL resource segment. Mirrors the URL structure: `/api/<django_app>/<segment>/` → `test_data/<django_app>/<segment>.json`.
+
 ```
 tests/
-├── test_data/          # One .json file per resource (named after the first URL path segment)
-│   ├── auth.json
-│   ├── employees.json
-│   └── tasks.json
+├── test_data/
+│   ├── auth/
+│   │   └── tokens.json
+│   └── hr/
+│       ├── employees.json
+│       └── tasks.json
 ├── conftest.py         # Fixture setup and parametrize hook
-└── test_hr_api.py      # Single test function — parametrized over all cases
+└── test_api.py         # Single test function — parametrized over all cases
 ```
 
 See [API Testing](/code/api_testing) for the full data-driven testing standard.
@@ -36,9 +40,9 @@ api/
     ├── admin.py
     ├── apps.py
     ├── models.py
-    ├── views.py           # Request/response only — no business logic
+    ├── views.py           # Request/response only — no business logic (can be a folder: views/__init__.py, views/auth.py, …)
     ├── urls.py
-    ├── serializers.py     # DRF serializers — API input/output validation
+    ├── serializers.py     # DRF serializers — API input/output validation (can be a folder: serializers/__init__.py, serializers/auth.py, …)
     ├── schema.py          # Internal DTOs as @dataclass(slots=True); Pydantic only for untrusted external data
     ├── services.py        # Business logic, decoupled from views (can be a folder: services/__init__.py, services/auth.py, …)
     ├── types.py           # Type aliases, Literal, TypedDict, Enum
