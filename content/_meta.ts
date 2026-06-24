@@ -5,6 +5,7 @@ const meta: MetaRecord = {
   design: { type: 'page', title: 'Design' },
   requirements: { type: 'page', title: 'Requirements' },
   backend: { type: 'page', title: 'Backend' },
+  frontend: { type: 'page', title: 'Frontend' },
 }
 
 export default meta

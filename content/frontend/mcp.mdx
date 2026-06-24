@@ -1,0 +1,107 @@
+---
+title: MCP Tools
+description: Model Context Protocol servers for Next.js, shadcn/ui, and library documentation in Claude Code.
+---
+
+## Overview
+
+| MCP | Purpose |
+|-----|---------|
+| [Next.js (Vercel)](#nextjs) | Query Next.js docs and manage Vercel deployments |
+| [shadcn/ui](#shadcnui) | Browse, add, and configure shadcn/ui components |
+| [Context7](#context7) | Fetch current library documentation for any package |
+
+---
+
+## Next.js
+
+The [Vercel MCP server](https://vercel.com/docs/mcp) connects Claude Code to Next.js documentation and your Vercel account.
+
+**Install**
+
+Add to `.claude/settings.json` under `mcpServers`:
+
+```json
+{
+  "mcpServers": {
+    "vercel": {
+      "command": "npx",
+      "args": ["-y", "@vercel/mcp-server"]
+    }
+  }
+}
+```
+
+**Use when**
+
+- Looking up Next.js App Router APIs (Server Actions, Route Handlers, caching, `next/config`)
+- Checking deployment status or environment variables in Vercel
+- Debugging build output or function logs
+
+---
+
+## shadcn/ui
+
+The shadcn MCP exposes the full component registry — browse, inspect examples, and generate the correct `npx shadcn add` command.
+
+**Install**
+
+```json
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["-y", "@shadcn/mcp-server"]
+    }
+  }
+}
+```
+
+**Key tools**
+
+| Tool | When to use |
+|------|-------------|
+| `search_items_in_registries` | Find a component by keyword before adding it |
+| `view_items_in_registries` | Inspect a component's full source and variants |
+| `get_add_command_for_items` | Get the exact `npx shadcn add` command for one or more components |
+| `get_item_examples_from_registries` | Pull usage examples before writing implementation code |
+| `get_audit_checklist` | Run an accessibility and API audit on an existing component |
+
+**Use when**
+
+- Selecting the right component variant before building UI
+- Verifying a component's props and slot API
+- Adding new components to the project
+
+---
+
+## Context7
+
+Context7 fetches current, version-accurate documentation for any library directly into the conversation — no stale training data.
+
+**Install**
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}
+```
+
+**Workflow**
+
+1. Call `resolve-library-id` with the library name and your question
+2. Pick the best match — prefer exact names and version-specific IDs
+3. Call `query-docs` with the selected ID and your question
+4. Use the returned docs and code examples
+
+**Use when**
+
+- Writing code that depends on an external package
+- Verifying an API signature or config option
+- Migrating between library versions
+- Any time your training data may be outdated (default to using this)

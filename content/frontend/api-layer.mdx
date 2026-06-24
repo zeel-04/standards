@@ -1,0 +1,146 @@
+---
+title: API Layer
+description: Centralized API fetching patterns for Next.js App Router projects.
+---
+
+## Overview
+
+All communication with backend APIs lives in `lib/api/`. No fetch calls outside this directory.
+
+```
+lib/
+└── api/
+    ├── client.ts      # Base fetch wrapper — auth, base URL, error handling
+    ├── users.ts       # User resource functions
+    └── orders.ts      # Order resource functions
+```
+
+---
+
+## Base Client
+
+`lib/api/client.ts` owns auth headers, the base URL, and error normalization. All resource files call through it.
+
+```ts
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message)
+  }
+}
+
+export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+      ...options?.headers,
+    },
+  })
+
+  if (!res.ok) throw new ApiError(res.status, await res.text())
+  return res.json() as Promise<T>
+}
+```
+
+---
+
+## Resource Files
+
+One file per resource domain. Export typed async functions — no raw fetch calls in components.
+
+```ts
+// lib/api/users.ts
+import { apiFetch } from './client'
+
+export const getUser = (id: string) =>
+  apiFetch<User>(`/users/${id}`)
+
+export const updateUser = (id: string, data: Partial<User>) =>
+  apiFetch<User>(`/users/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
+```
+
+---
+
+## Fetching in Components
+
+| Context | Pattern |
+|---------|---------|
+| Server Component | Call API functions directly — no hook, no useEffect |
+| Client Component | Wrap with [SWR](https://swr.vercel.app/) for reads |
+| Mutation | Use a Server Action |
+
+**Server Component (reads)**
+
+```tsx
+// app/users/[id]/page.tsx
+import { getUser } from '@/lib/api/users'
+
+export default async function UserPage({ params }: { params: { id: string } }) {
+  const user = await getUser(params.id)
+  return <UserProfile user={user} />
+}
+```
+
+**Client Component (interactive reads)**
+
+```tsx
+'use client'
+import useSWR from 'swr'
+import { getUser } from '@/lib/api/users'
+
+export function UserCard({ id }: { id: string }) {
+  const { data, error, isLoading } = useSWR(`/users/${id}`, () => getUser(id))
+  // ...
+}
+```
+
+---
+
+## Mutations via Server Actions
+
+Mutations go through Server Actions — not client-side fetch calls.
+
+```ts
+// app/actions/users.ts
+'use server'
+
+import { revalidatePath } from 'next/cache'
+import { updateUser } from '@/lib/api/users'
+
+export async function updateUserAction(id: string, data: FormData) {
+  await updateUser(id, Object.fromEntries(data) as Partial<User>)
+  revalidatePath(`/users/${id}`)
+}
+```
+
+Bind the action directly to a form:
+
+```tsx
+<form action={updateUserAction.bind(null, user.id)}>
+  {/* fields */}
+  <button type="submit">Save</button>
+</form>
+```
+
+---
+
+## Error Handling
+
+Catch `ApiError` at the boundary that can meaningfully respond — usually the Server Action or the SWR call site.
+
+```ts
+try {
+  await updateUser(id, data)
+} catch (err) {
+  if (err instanceof ApiError && err.status === 404) {
+    notFound()
+  }
+  throw err
+}
+```
+
+Do not swallow errors silently. Propagate to the nearest `error.tsx` boundary when there is no recoverable path.
